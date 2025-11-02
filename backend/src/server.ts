@@ -1,4 +1,5 @@
 import express from 'express';
+import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -69,21 +70,20 @@ app.use(cookieParser());
  */
 
 // Health check route
-app.get('/', (_req, res) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     status: 'success',
-    message: 'Desishub Candidates Assessment API',
+    message: 'MegaHub Candidates Assessment API',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
   });
 });
 
 // API status route
-app.get('/api/health', (_req, res) => {
+app.get('/health', (_req: Request, res: Response) => {
   res.json({
-    status: 'success',
-    message: 'API is healthy',
-    database: 'connected',
+    status: 'OK',
+    message: 'MegaHub Candidates Assessment API',
     timestamp: new Date().toISOString(),
   });
 });

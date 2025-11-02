@@ -35,7 +35,7 @@ export const LoginForm: React.FC = () => {
         id="email"
         type="email"
         label="Email Address"
-        placeholder="admin@desishub.com"
+        placeholder="admin@megahub.com"
         error={errors.email?.message}
         autoComplete="email"
         required

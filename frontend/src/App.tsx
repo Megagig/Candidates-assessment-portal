@@ -9,10 +9,10 @@ import { ProtectedRoute } from './components/auth';
 import { AdminLayout } from './components/AdminLayout';
 
 // Public pages
-import { HomePage, RegisterPage, RegistrationSuccessPage } from './pages/public';
+import { HomePage, RegisterPage, RegistrationSuccessPage, ContactPage } from './pages/public';
 
 // Admin pages
-import { LoginPage, DashboardPage, CandidatesListPage, CandidateDetailPage } from './pages/admin';
+import { LoginPage, DashboardPage, CandidatesListPage, CandidateDetailPage, AdminRegisterPage } from './pages/admin';
 
 import './App.css';
 
@@ -25,16 +25,18 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" storageKey="desishub-theme">
+      <ThemeProvider defaultTheme="system" storageKey="megahub-theme">
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/registration-success" element={<RegistrationSuccessPage />} />
+            <Route path="/contact" element={<ContactPage />} />
 
-            {/* Admin Login */}
+            {/* Admin Login & Registration */}
             <Route path="/admin/login" element={<LoginPage />} />
+            <Route path="/admin/register" element={<AdminRegisterPage />} />
 
             {/* Protected Admin Routes */}
             <Route

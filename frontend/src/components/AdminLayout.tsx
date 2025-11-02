@@ -30,13 +30,11 @@ export const AdminLayout: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo/Brand */}
-            <div className="flex items-center">
-              <Link to="/admin/dashboard" className="text-xl font-bold text-gray-900 dark:text-white">
-                Desishub Admin
-              </Link>
-            </div>
-
-            {/* Desktop Nav Links */}
+              <div className="flex items-center">
+                <Link to="/admin/dashboard" className="text-xl font-bold text-gray-900 dark:text-white">
+                  MegaHub Admin
+                </Link>
+              </div>            {/* Desktop Nav Links */}
             <div className="hidden md:flex items-center gap-6">
               <NavLink to="/admin/dashboard" active={location.pathname === '/admin/dashboard'}>
                 Dashboard

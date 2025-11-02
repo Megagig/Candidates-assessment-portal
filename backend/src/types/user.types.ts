@@ -10,6 +10,7 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: UserRole;
+  approved: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -27,6 +28,7 @@ export interface IUserResponse {
   name: string;
   email: string;
   role: UserRole;
+  approved: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

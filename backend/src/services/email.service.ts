@@ -73,8 +73,8 @@ const generateTierResultEmail = (
             Hello <strong>${candidateName}</strong>,
           </p>
 
-          <p style="margin: 0 0 30px; font-size: 16px; color: #374151; line-height: 1.6;">
-            Thank you for completing the Desishub skill assessment! We've carefully evaluated your responses and are excited to share your results.
+                    <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+            Thank you for completing the MegaHub skill assessment! We've carefully evaluated your responses and are excited to share your results.
           </p>
 
           <!-- Tier Badge -->
@@ -123,14 +123,14 @@ const generateTierResultEmail = (
           <!-- Contact Info -->
           <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
             If you have any questions or need assistance, please don't hesitate to reach out to our team at 
-            <a href="mailto:support@desishub.com" style="color: ${color}; text-decoration: none;">support@desishub.com</a>
+            <a href="mailto:support@megahub.com" style="color: ${color}; text-decoration: none;">support@megahub.com</a>
           </p>
         </div>
 
         <!-- Footer -->
         <div style="background-color: #f9fafb; border-radius: 0 0 8px 8px; padding: 30px; text-align: center;">
           <p style="margin: 0 0 10px; font-size: 14px; color: #6b7280;">
-            © ${new Date().getFullYear()} Desishub. All rights reserved.
+            © ${new Date().getFullYear()} MegaHub. All rights reserved.
           </p>
           <p style="margin: 0; font-size: 12px; color: #9ca3af;">
             This email was sent to you because you registered for our skill assessment program.
