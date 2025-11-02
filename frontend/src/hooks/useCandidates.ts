@@ -53,11 +53,11 @@ export const useRegisterCandidate = () => {
   return useMutation({
     mutationFn: (data: CandidateRegistrationData) =>
       candidateApi.register(data),
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['candidates'] });
       queryClient.invalidateQueries({ queryKey: ['candidate-stats'] });
       showToast(
-        response.message || 'Registration successful! Check your email for tier assignment.',
+        'Registration successful! Check your email for tier assignment.',
         'success'
       );
     },
