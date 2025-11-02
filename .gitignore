@@ -9,3 +9,5 @@ npm-debug.log
 .env.test.local
 .env.production.local   
 task.md
+implementation_notes
+coverage/
