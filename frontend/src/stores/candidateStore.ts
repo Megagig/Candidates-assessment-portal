@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Candidate, CandidateFilters, CandidateSortOptions, Tier } from '../types';
+import type { Candidate, CandidateFilters, CandidateSortOptions } from '../types';
 
 interface CandidateState {
   candidates: Candidate[];
