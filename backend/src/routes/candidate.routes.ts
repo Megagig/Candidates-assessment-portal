@@ -11,6 +11,7 @@ import {
 } from '../controllers/candidate.controller.js';
 import { authenticate, isAdmin } from '../middleware/auth.middleware.js';
 import { validate } from '../middleware/validation.middleware.js';
+import { transformAssessmentResponses } from '../middleware/transform.middleware.js';
 import {
   candidateRegistrationSchema,
   candidateUpdateSchema,
@@ -25,7 +26,12 @@ const router = Router();
  * @desc    Register a new candidate (public endpoint)
  * @access  Public
  */
-router.post('/register', validate(candidateRegistrationSchema), registerCandidate);
+router.post(
+  '/register',
+  transformAssessmentResponses,
+  validate(candidateRegistrationSchema),
+  registerCandidate
+);
 
 /**
  * @route   GET /api/candidates/stats
