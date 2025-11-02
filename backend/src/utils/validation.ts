@@ -49,43 +49,43 @@ export const loginSchema = z.object({
 // Assessment response schema
 const assessmentResponseSchema = z.object({
   htmlCssJsKnowledge: z.nativeEnum(ExperienceLevel, {
-    required_error: 'HTML/CSS/JS knowledge level is required',
+    message: 'HTML/CSS/JS knowledge level is required',
   }),
   reactNextJsKnowledge: z.nativeEnum(ExperienceLevel, {
-    required_error: 'React/Next.js knowledge level is required',
+    message: 'React/Next.js knowledge level is required',
   }),
   canBuildCrudApp: z.boolean({
-    required_error: 'CRUD app building capability is required',
+    message: 'CRUD app building capability is required',
   }),
   canImplementAuth: z.boolean({
-    required_error: 'Authentication implementation capability is required',
+    message: 'Authentication implementation capability is required',
   }),
   canImplementGoogleAuth: z.boolean({
-    required_error: 'Google authentication capability is required',
+    message: 'Google authentication capability is required',
   }),
   databaseKnowledge: z.nativeEnum(ExperienceLevel, {
-    required_error: 'Database knowledge level is required',
+    message: 'Database knowledge level is required',
   }),
   expressHonoKnowledge: z.nativeEnum(ExperienceLevel, {
-    required_error: 'Express/Hono knowledge level is required',
+    message: 'Express/Hono knowledge level is required',
   }),
   canBuildAuthenticatedApi: z.boolean({
-    required_error: 'Authenticated API building capability is required',
+    message: 'Authenticated API building capability is required',
   }),
   canDocumentApi: z.boolean({
-    required_error: 'API documentation capability is required',
+    message: 'API documentation capability is required',
   }),
   laravelKnowledge: z.nativeEnum(ExperienceLevel, {
-    required_error: 'Laravel knowledge level is required',
+    message: 'Laravel knowledge level is required',
   }),
   golangKnowledge: z.nativeEnum(ExperienceLevel, {
-    required_error: 'Golang knowledge level is required',
+    message: 'Golang knowledge level is required',
   }),
   canBuildGoApi: z.boolean({
-    required_error: 'Go API building capability is required',
+    message: 'Go API building capability is required',
   }),
   canDeployApps: z.boolean({
-    required_error: 'App deployment capability is required',
+    message: 'App deployment capability is required',
   }),
 });
 
@@ -93,25 +93,25 @@ const assessmentResponseSchema = z.object({
 export const candidateRegistrationSchema = z.object({
   body: z.object({
     name: z
-      .string({ required_error: 'Name is required' })
-      .min(2, 'Name must be at least 2 characters')
-      .max(100, 'Name cannot exceed 100 characters')
+      .string({ message: 'Name is required' })
+      .min(2, { message: 'Name must be at least 2 characters' })
+      .max(100, { message: 'Name cannot exceed 100 characters' })
       .trim(),
     email: z
-      .string({ required_error: 'Email is required' })
-      .email('Please provide a valid email address')
+      .string({ message: 'Email is required' })
+      .email({ message: 'Please provide a valid email address' })
       .toLowerCase()
       .trim(),
     phone: z
-      .string({ required_error: 'Phone number is required' })
+      .string({ message: 'Phone number is required' })
       .regex(
         /^[\d\s\-\+\(\)]+$/,
-        'Please provide a valid phone number'
+        { message: 'Please provide a valid phone number' }
       )
       .trim(),
     country: z
       .string()
-      .max(100, 'Country name cannot exceed 100 characters')
+      .max(100, { message: 'Country name cannot exceed 100 characters' })
       .trim()
       .optional(),
     assessmentResponses: assessmentResponseSchema,
