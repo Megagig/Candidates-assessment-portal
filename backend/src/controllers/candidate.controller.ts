@@ -64,7 +64,7 @@ export const registerCandidate = async (
     const tierInfo = getTierInfo(assignedTier);
 
     const candidateResponse: ICandidateResponse = {
-      _id: candidate._id.toString(),
+      _id: (candidate._id as { toString: () => string }).toString(),
       name: candidate.name,
       email: candidate.email,
       phone: candidate.phone,

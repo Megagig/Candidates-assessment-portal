@@ -5,8 +5,8 @@
   "description": "Candidates selection portal",
   "main": "server.ts",
   "scripts": {
-  "start": "node dist/server.js",
-  "dev": "nodemon --watch src --ext ts,json --exec \"node --loader ts-node/esm src/server.ts\"",
+    "start": "node dist/server.js",
+    "dev": "nodemon --watch src --ext ts,json --exec \"node --loader ts-node/esm src/server.ts\"",
     "build": "tsc",
     "lint": "eslint ."
   },
@@ -30,8 +30,10 @@
   "devDependencies": {
     "@eslint/js": "^9.39.0",
     "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/json2csv": "^5.0.7",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.9.2",
     "eslint": "^9.39.0",

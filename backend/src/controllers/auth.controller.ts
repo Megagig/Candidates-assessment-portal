@@ -13,8 +13,10 @@ const generateToken = (userId: string, email: string, role: string): string => {
     throw new AppError('JWT_SECRET is not configured', 500);
   }
 
+  const expiresIn = process.env.JWT_EXPIRES_IN || '7d';
+
   return jwt.sign({ userId, email, role }, jwtSecret, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    expiresIn: expiresIn,
   });
 };
 
@@ -60,14 +62,18 @@ export const register = async (
     });
 
     // Generate token
-    const token = generateToken(user._id.toString(), user.email, user.role);
+    const token = generateToken(
+      (user._id as { toString: () => string }).toString(),
+      user.email,
+      user.role
+    );
 
     // Set cookie
     setCookieToken(res, token);
 
     // Prepare user response (password is excluded by model transform)
     const userResponse: IUserResponse = {
-      _id: user._id.toString(),
+      _id: (user._id as { toString: () => string }).toString(),
       name: user.name,
       email: user.email,
       role: user.role,
@@ -113,14 +119,18 @@ export const login = async (
     }
 
     // Generate token
-    const token = generateToken(user._id.toString(), user.email, user.role);
+    const token = generateToken(
+      (user._id as { toString: () => string }).toString(),
+      user.email,
+      user.role
+    );
 
     // Set cookie
     setCookieToken(res, token);
 
     // Prepare user response
     const userResponse: IUserResponse = {
-      _id: user._id.toString(),
+      _id: (user._id as { toString: () => string }).toString(),
       name: user.name,
       email: user.email,
       role: user.role,
@@ -189,7 +199,7 @@ export const getMe = async (
     }
 
     const userResponse: IUserResponse = {
-      _id: user._id.toString(),
+      _id: (user._id as { toString: () => string }).toString(),
       name: user.name,
       email: user.email,
       role: user.role,
