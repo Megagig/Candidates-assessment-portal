@@ -5,24 +5,24 @@ import { Button } from '../../components/ui';
 export const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8 sm:py-16">
         {/* Header */}
-        <header className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+        <header className="text-center mb-12 sm:mb-16">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Desishub Talent Assessment
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
+          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300">
             Join our team of skilled developers
           </p>
         </header>
 
         {/* Main Content */}
-        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 md:p-12">
+        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 sm:p-8 md:p-12">
           <div className="mb-8">
-            <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
               Welcome to Desishub!
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-6">
               We're an innovative tech agency looking for talented developers to join our team.
               Our skill assessment helps us understand your expertise and match you with the right opportunities.
             </p>
@@ -30,7 +30,7 @@ export const HomePage: React.FC = () => {
 
           {/* Tier Information */}
           <div className="mb-8">
-            <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-4">
               Our Skill Tiers
             </h3>
             <div className="space-y-4">
@@ -65,7 +65,7 @@ export const HomePage: React.FC = () => {
           {/* CTA */}
           <div className="text-center">
             <Link to="/register">
-              <Button size="lg" className="px-8">
+              <Button size="lg" className="px-8 w-full sm:w-auto">
                 Start Your Assessment
               </Button>
             </Link>
@@ -97,11 +97,11 @@ interface TierCardProps {
 
 const TierCard: React.FC<TierCardProps> = ({ tier, description, color }) => {
   return (
-    <div className="flex items-start p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-      <div className={`${color} rounded-full w-3 h-3 mt-1.5 mr-4 flex-shrink-0`}></div>
+    <div className="flex items-start p-3 sm:p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+      <div className={`${color} rounded-full w-3 h-3 mt-1.5 mr-3 sm:mr-4 flex-shrink-0`}></div>
       <div>
-        <h4 className="font-semibold text-gray-900 dark:text-white">{tier}</h4>
-        <p className="text-gray-600 dark:text-gray-300">{description}</p>
+        <h4 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white">{tier}</h4>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
       </div>
     </div>
   );

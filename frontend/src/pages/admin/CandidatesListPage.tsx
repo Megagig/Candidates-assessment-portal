@@ -9,6 +9,8 @@ import type { Tier } from '../../types';
 export const CandidatesListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTier, setSelectedTier] = useState<Tier | ''>('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   const { currentPage, setPage, clearFilters } = useCandidateStore();
@@ -29,6 +31,8 @@ export const CandidatesListPage: React.FC = () => {
     limit: 10,
     ...(debouncedSearch && { search: debouncedSearch }),
     ...(selectedTier && { tier: selectedTier }),
+    ...(startDate && { startDate }),
+    ...(endDate && { endDate }),
   };
 
   const { data, isLoading, error } = useCandidates(queryParams);
@@ -36,6 +40,8 @@ export const CandidatesListPage: React.FC = () => {
   const handleClearFilters = () => {
     setSearchQuery('');
     setSelectedTier('');
+    setStartDate('');
+    setEndDate('');
     clearFilters();
   };
 
@@ -57,17 +63,17 @@ export const CandidatesListPage: React.FC = () => {
   }
 
   const candidates = data?.data || [];
-  const hasFilters = searchQuery || selectedTier;
+  const hasFilters = searchQuery || selectedTier || startDate || endDate;
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Candidates
           </h1>
-          <p className="text-gray-600 dark:text-gray-300">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
             Total: {data?.pagination.total || 0} candidates
           </p>
         </div>
@@ -75,6 +81,7 @@ export const CandidatesListPage: React.FC = () => {
           onClick={handleExport}
           isLoading={isExporting}
           variant="secondary"
+          className="w-full sm:w-auto"
         >
           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -85,7 +92,7 @@ export const CandidatesListPage: React.FC = () => {
 
       {/* Filters */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
@@ -95,7 +102,39 @@ export const CandidatesListPage: React.FC = () => {
             onTierChange={(tier) => setSelectedTier(tier)}
             onClearFilters={handleClearFilters}
           />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              From Date
+            </label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              To Date
+            </label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+            />
+          </div>
         </div>
+        {hasFilters && (
+          <div className="mt-4">
+            <Button variant="ghost" size="sm" onClick={handleClearFilters}>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Clear All Filters
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Table */}

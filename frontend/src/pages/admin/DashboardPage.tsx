@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCandidateStats } from '../../hooks';
 import { Loading, EmptyState } from '../../components/ui';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
 
 const TIER_COLORS = ['#6B7280', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444'];
 
@@ -33,14 +33,19 @@ export const DashboardPage: React.FC = () => {
     count: tier.count,
   }));
 
+  const lineData = stats.registrationsOverTime.map((item) => ({
+    date: new Date(item._id).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    count: item.count,
+  }));
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Dashboard
         </h1>
-        <p className="text-gray-600 dark:text-gray-300">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
           Overview of candidate registrations and tier distribution
         </p>
       </div>
@@ -137,6 +142,29 @@ export const DashboardPage: React.FC = () => {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Registrations Over Time Chart */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          Registrations Over Time (Last 7 Days)
+        </h2>
+        {lineData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={lineData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="count" stroke="#8B5CF6" strokeWidth={2} name="Registrations" />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-[300px] flex items-center justify-center text-gray-500 dark:text-gray-400">
+            No registrations in the last 7 days
+          </div>
+        )}
       </div>
 
       {/* Quick Actions */}

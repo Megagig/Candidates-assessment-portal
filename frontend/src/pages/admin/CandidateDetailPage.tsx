@@ -45,7 +45,7 @@ export const CandidateDetailPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate('/admin/candidates')}
@@ -56,15 +56,18 @@ export const CandidateDetailPage: React.FC = () => {
             </svg>
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
               {candidate.name}
             </h1>
-            <p className="text-gray-600 dark:text-gray-300">{candidate.email}</p>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 break-all">
+              {candidate.email}
+            </p>
           </div>
         </div>
         <Button
           variant="danger"
           onClick={() => setShowDeleteModal(true)}
+          className="w-full sm:w-auto"
         >
           Delete Candidate
         </Button>
@@ -112,9 +115,9 @@ export const CandidateDetailPage: React.FC = () => {
 
       {/* Notification Status */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Email Notification
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -134,6 +137,7 @@ export const CandidateDetailPage: React.FC = () => {
             onClick={handleResendNotification}
             isLoading={isResending}
             variant="secondary"
+            className="w-full sm:w-auto"
           >
             {candidate.notificationSent ? 'Resend Notification' : 'Send Notification'}
           </Button>

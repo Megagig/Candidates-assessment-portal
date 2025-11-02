@@ -58,14 +58,21 @@ export interface CandidateDetailResponse {
 
 export interface TierStats {
   tier: Tier;
+  tierName: string;
   count: number;
-  percentage: number;
+  percentage: string;
+}
+
+export interface RegistrationOverTime {
+  _id: string;
+  count: number;
 }
 
 export interface CandidateStats {
   totalCandidates: number;
   tierDistribution: TierStats[];
   recentRegistrations: number;
+  registrationsOverTime: RegistrationOverTime[];
 }
 
 export interface StatsResponse {

@@ -56,7 +56,7 @@ export const candidateApi = {
 
   // Resend notification email (protected)
   resendNotification: async (id: string): Promise<{ success: boolean; message: string }> => {
-    const response = await apiClient.post<{ success: boolean; message: string }>(`/candidates/${id}/resend-notification`);
+    const response = await apiClient.post<{ success: boolean; message: string }>(`/candidates/${id}/resend-email`);
     return response.data;
   },
 };
