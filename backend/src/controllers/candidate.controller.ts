@@ -68,7 +68,7 @@ export const registerCandidate = async (
       name: candidate.name,
       email: candidate.email,
       phone: candidate.phone,
-      country: candidate.country,
+      ...(candidate.country ? { country: candidate.country } : {}),
       assessmentResponses: candidate.assessmentResponses,
       assignedTier: candidate.assignedTier,
       tierAssignedAt: candidate.tierAssignedAt,

@@ -30,9 +30,12 @@ const handleMongooseValidationError = (
 /**
  * Handle Mongoose duplicate key errors
  */
-const handleMongooseDuplicateKeyError = (err: { keyValue: Record<string, unknown> }): AppError => {
+const handleMongooseDuplicateKeyError = (err: { keyValue?: Record<string, unknown> }): AppError => {
+  if (!err.keyValue) {
+    return new AppError('Duplicate key error', 409);
+  }
   const field = Object.keys(err.keyValue)[0];
-  const value = err.keyValue[field];
+  const value = field ? err.keyValue[field] : 'unknown';
   const message = `${field} '${value}' already exists. Please use a different ${field}.`;
 
   return new AppError(message, 409);
@@ -50,9 +53,9 @@ const handleMongooseCastError = (err: MongooseError.CastError): AppError => {
  * Handle Zod validation errors
  */
 const handleZodError = (err: ZodError): ValidationError => {
-  const errors = err.errors.map((error) => ({
-    field: error.path.join('.'),
-    message: error.message,
+  const errors = err.issues.map((issue) => ({
+    field: issue.path.join('.'),
+    message: issue.message,
   }));
 
   return new ValidationError('Validation failed', errors);
@@ -65,8 +68,11 @@ const sendErrorDev = (err: AppError, res: Response): void => {
   const response: ErrorResponse = {
     status: err.status,
     message: err.message,
-    stack: err.stack,
   };
+
+  if (err.stack) {
+    response.stack = err.stack;
+  }
 
   if (err instanceof ValidationError) {
     response.errors = err.errors;
@@ -118,8 +124,8 @@ export const errorHandler = (
   // Convert known errors to AppError
   if (err instanceof MongooseError.ValidationError) {
     error = handleMongooseValidationError(err);
-  } else if ('code' in err && err.code === 11000) {
-    error = handleMongooseDuplicateKeyError(err as { keyValue: Record<string, unknown> });
+  } else if ('code' in err && err.code === 11000 && 'keyValue' in err) {
+    error = handleMongooseDuplicateKeyError(err as unknown as { keyValue?: Record<string, unknown> });
   } else if (err instanceof MongooseError.CastError) {
     error = handleMongooseCastError(err);
   } else if (err instanceof ZodError) {

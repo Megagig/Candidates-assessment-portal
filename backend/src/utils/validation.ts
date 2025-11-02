@@ -177,12 +177,12 @@ export const candidateQuerySchema = z.object({
       .string()
       .transform((val) => parseInt(val, 10))
       .optional()
-      .default('1'),
+      .default(1),
     limit: z
       .string()
       .transform((val) => parseInt(val, 10))
       .optional()
-      .default('10'),
+      .default(10),
   }),
 });
 
