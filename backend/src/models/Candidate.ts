@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
-import { SkillTier, ExperienceLevel } from '../types';
-import type { ICandidate, IAssessmentResponse } from '../types';
+import { SkillTier, ExperienceLevel } from '../types/index.js';
+import type { ICandidate, IAssessmentResponse } from '../types/index.js';
 
 const assessmentResponseSchema = new Schema<IAssessmentResponse>(
   {
@@ -152,7 +152,6 @@ const candidateSchema = new Schema<ICandidate>(
 );
 
 // Indexes for better query performance
-candidateSchema.index({ email: 1 });
 candidateSchema.index({ assignedTier: 1 });
 candidateSchema.index({ createdAt: -1 });
 candidateSchema.index({ name: 'text', email: 'text' }); // Text index for search

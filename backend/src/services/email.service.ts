@@ -2,8 +2,10 @@ import { Resend } from 'resend';
 import { SkillTier } from '../types/index.js';
 import { getTierName, getTierDescription } from './assessment.service.js';
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend with API key (only if available)
+const resend = process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your-resend-api-key-here'
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 /**
  * Email configuration
@@ -149,7 +151,7 @@ export const sendTierResultEmail = async (
   tier: SkillTier
 ): Promise<{ success: boolean; error?: string }> => {
   try {
-    if (!process.env.RESEND_API_KEY) {
+    if (!resend || !process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === 'your-resend-api-key-here') {
       console.warn('RESEND_API_KEY not configured. Email sending is disabled.');
       return { success: false, error: 'Email service not configured' };
     }

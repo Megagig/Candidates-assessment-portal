@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import type { IUser } from '../types';
-import { UserRole } from '../types';
+import type { IUser } from '../types/index.js';
+import { UserRole } from '../types/index.js';
 
 const userSchema = new Schema<IUser>(
   {
@@ -46,9 +46,6 @@ const userSchema = new Schema<IUser>(
     },
   }
 );
-
-// Index for faster email lookups
-userSchema.index({ email: 1 });
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {

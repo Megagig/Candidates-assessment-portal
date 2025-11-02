@@ -1,4 +1,4 @@
-import { ExperienceLevel, SkillTier } from './candidate.types';
+import { ExperienceLevel, SkillTier } from './candidate.types.js';
 
 export enum QuestionType {
   MULTIPLE_CHOICE = 'multiple_choice',

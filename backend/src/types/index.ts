@@ -1,3 +1,3 @@
-export * from './user.types';
-export * from './candidate.types';
-export * from './assessment.types';
+export * from './user.types.js';
+export * from './candidate.types.js';
+export * from './assessment.types.js';
