@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { IUser, UserRole } from '../types';
+import type { IUser } from '../types';
+import { UserRole } from '../types';
 
 const userSchema = new Schema<IUser>(
   {
@@ -37,7 +38,7 @@ const userSchema = new Schema<IUser>(
   {
     timestamps: true,
     toJSON: {
-      transform: (_doc, ret) => {
+      transform: (_doc, ret: Record<string, unknown>) => {
         delete ret.password;
         delete ret.__v;
         return ret;

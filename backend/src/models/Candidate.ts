@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
-import { ICandidate, IAssessmentResponse, SkillTier, ExperienceLevel } from '../types';
+import { SkillTier, ExperienceLevel } from '../types';
+import type { ICandidate, IAssessmentResponse } from '../types';
 
 const assessmentResponseSchema = new Schema<IAssessmentResponse>(
   {
@@ -142,7 +143,7 @@ const candidateSchema = new Schema<ICandidate>(
   {
     timestamps: true,
     toJSON: {
-      transform: (_doc, ret) => {
+      transform: (_doc, ret: Record<string, unknown>) => {
         delete ret.__v;
         return ret;
       },
