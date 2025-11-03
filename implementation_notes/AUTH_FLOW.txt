@@ -1,0 +1,217 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                     ADMIN AUTHENTICATION FLOW DIAGRAM                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           REGISTRATION FLOW                                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    User                    Frontend                Backend              Database
+     │                         │                       │                     │
+     │  1. Fill Form          │                       │                     │
+     │  (Name, Email, Pass)   │                       │                     │
+     ├───────────────────────>│                       │                     │
+     │                         │                       │                     │
+     │  2. Submit             │                       │                     │
+     ├───────────────────────>│                       │                     │
+     │                         │                       │                     │
+     │                         │  3. POST /auth/register                    │
+     │                         │  {name, email, password}                   │
+     │                         ├──────────────────────>│                     │
+     │                         │                       │                     │
+     │                         │                       │  4. Validate Input │
+     │                         │                       │  (Zod Schema)      │
+     │                         │                       │                     │
+     │                         │                       │  5. Hash Password  │
+     │                         │                       │  (bcrypt)          │
+     │                         │                       │                     │
+     │                         │                       │  6. Create User    │
+     │                         │                       │  approved: false   │
+     │                         │                       ├────────────────────>│
+     │                         │                       │                     │
+     │                         │                       │  7. User Saved     │
+     │                         │                       │<────────────────────┤
+     │                         │                       │                     │
+     │                         │  8. Response          │                     │
+     │                         │  {success, message, user}                  │
+     │                         │<──────────────────────┤                     │
+     │                         │                       │                     │
+     │  9. Show "Pending      │                       │                     │
+     │     Approval" Page     │                       │                     │
+     │<───────────────────────┤                       │                     │
+     │                         │                       │                     │
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          APPROVAL FLOW (Manual)                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Admin                   Script                  Database
+     │                         │                       │
+     │  1. Run Command        │                       │
+     │  npm run approve-admin │                       │
+     ├───────────────────────>│                       │
+     │                         │                       │
+     │                         │  2. Connect to DB    │
+     │                         ├──────────────────────>│
+     │                         │                       │
+     │                         │  3. Update User      │
+     │                         │  approved: true      │
+     │                         ├──────────────────────>│
+     │                         │                       │
+     │                         │  4. User Updated     │
+     │                         │<──────────────────────┤
+     │                         │                       │
+     │  5. Success Message    │                       │
+     │<───────────────────────┤                       │
+     │                         │                       │
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              LOGIN FLOW                                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    User                    Frontend                Backend              Database
+     │                         │                       │                     │
+     │  1. Enter Credentials  │                       │                     │
+     │  (Email, Password)     │                       │                     │
+     ├───────────────────────>│                       │                     │
+     │                         │                       │                     │
+     │  2. Submit             │                       │                     │
+     ├───────────────────────>│                       │                     │
+     │                         │                       │                     │
+     │                         │  3. POST /auth/login │                     │
+     │                         │  {email, password}   │                     │
+     │                         ├──────────────────────>│                     │
+     │                         │                       │                     │
+     │                         │                       │  4. Find User      │
+     │                         │                       │  by Email          │
+     │                         │                       ├────────────────────>│
+     │                         │                       │                     │
+     │                         │                       │  5. User Found     │
+     │                         │                       │<────────────────────┤
+     │                         │                       │                     │
+     │                         │                       │  6. Check if       │
+     │                         │                       │     approved       │
+     │                         │                       │                     │
+     │                         │                       │  7. Compare        │
+     │                         │                       │     Password       │
+     │                         │                       │     (bcrypt)       │
+     │                         │                       │                     │
+     │                         │                       │  8. Generate JWT   │
+     │                         │                       │     Token          │
+     │                         │                       │                     │
+     │                         │  9. Response          │                     │
+     │                         │  {success, message, user}                  │
+     │                         │  Set-Cookie: token=JWT                     │
+     │                         │<──────────────────────┤                     │
+     │                         │                       │                     │
+     │                         │  10. Store User      │                     │
+     │                         │      in State        │                     │
+     │                         │                       │                     │
+     │  11. Redirect to       │                       │                     │
+     │      Dashboard         │                       │                     │
+     │<───────────────────────┤                       │                     │
+     │                         │                       │                     │
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        PROTECTED ROUTE ACCESS                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    User                    Frontend                Backend              Database
+     │                         │                       │                     │
+     │  1. Access Dashboard   │                       │                     │
+     ├───────────────────────>│                       │                     │
+     │                         │                       │                     │
+     │                         │  2. Check Auth State │                     │
+     │                         │     (Zustand Store)  │                     │
+     │                         │                       │                     │
+     │                         │  3. GET /auth/me     │                     │
+     │                         │  Cookie: token=JWT   │                     │
+     │                         ├──────────────────────>│                     │
+     │                         │                       │                     │
+     │                         │                       │  4. Verify JWT     │
+     │                         │                       │     Token          │
+     │                         │                       │                     │
+     │                         │                       │  5. Get User       │
+     │                         │                       │     from DB        │
+     │                         │                       ├────────────────────>│
+     │                         │                       │                     │
+     │                         │                       │  6. User Data      │
+     │                         │                       │<────────────────────┤
+     │                         │                       │                     │
+     │                         │  7. Response          │                     │
+     │                         │  {success, user}     │                     │
+     │                         │<──────────────────────┤                     │
+     │                         │                       │                     │
+     │  8. Show Dashboard     │                       │                     │
+     │<───────────────────────┤                       │                     │
+     │                         │                       │                     │
+
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              LOGOUT FLOW                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    User                    Frontend                Backend
+     │                         │                       │
+     │  1. Click Logout       │                       │
+     ├───────────────────────>│                       │
+     │                         │                       │
+     │                         │  2. POST /auth/logout│
+     │                         │  Cookie: token=JWT   │
+     │                         ├──────────────────────>│
+     │                         │                       │
+     │                         │                       │  3. Clear Cookie
+     │                         │                       │
+     │                         │  4. Response          │
+     │                         │  {success, message}  │
+     │                         │  Clear-Cookie: token │
+     │                         │<──────────────────────┤
+     │                         │                       │
+     │                         │  5. Clear Auth State │
+     │                         │     (Zustand Store)  │
+     │                         │                       │
+     │  6. Redirect to Login  │                       │
+     │<───────────────────────┤                       │
+     │                         │                       │
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              KEY COMPONENTS                                  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Frontend:
+  • React Router - Navigation & protected routes
+  • Zustand - Auth state management
+  • Axios - HTTP client with credentials
+  • React Hook Form + Zod - Form validation
+
+Backend:
+  • Express - Web framework
+  • JWT - Token generation & verification
+  • bcrypt - Password hashing
+  • Zod - Input validation
+  • Mongoose - MongoDB ODM
+
+Security:
+  • httpOnly Cookies - XSS protection
+  • CORS with credentials - Cross-origin security
+  • Rate Limiting - Brute force protection
+  • Helmet - Security headers
+  • Password Hashing - bcrypt with salt
+  • Admin Approval - Manual verification required
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           TOKEN LIFECYCLE                                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+1. Login → JWT Generated → Stored in httpOnly Cookie
+2. Each Request → Cookie Sent Automatically → Backend Verifies JWT
+3. Token Valid → Request Processed → Response Sent
+4. Token Expired → 401 Error → Redirect to Login
+5. Logout → Cookie Cleared → User Logged Out
+
+Token Expiry: 7 days (configurable in .env)
+Cookie Attributes: httpOnly, secure (production), sameSite: strict
