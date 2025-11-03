@@ -35,7 +35,14 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:5173'],
+        connectSrc: [
+          "'self'",
+          'http://localhost:5000',
+          'http://localhost:5173',
+          'http://localhost:3000',
+          process.env.FRONTEND_URL || '',
+          process.env.RENDER_EXTERNAL_URL || '',
+        ].filter(Boolean),
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", 'data:', 'https:'],
