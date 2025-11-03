@@ -1,3 +1,5 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
@@ -10,6 +12,10 @@ import authRoutes from './routes/auth.routes.js';
 import candidateRoutes from './routes/candidate.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -65,6 +71,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Parse URL-enc
  * Cookie Parser Middleware
  */
 app.use(cookieParser());
+
+// Serve static files from the frontend's dist folder
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
 /**
  * API Routes
