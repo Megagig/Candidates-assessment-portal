@@ -7,7 +7,7 @@ import { queryClient } from './lib/queryClient';
 import { useAuthStore } from './stores';
 import { theme } from './theme/mantine-theme';
 import { ProtectedRoute } from './components/auth';
-import { AdminLayout } from './components/AdminLayout';
+import { MantineAdminLayout } from './components/MantineAdminLayout';
 
 // Public pages
 import { HomePage, RegisterPage, RegistrationSuccessPage, ContactPage } from './pages/public';
@@ -54,7 +54,7 @@ function App() {
               path="/admin"
               element={
                 <ProtectedRoute>
-                  <AdminLayout />
+                  <MantineAdminLayout />
                 </ProtectedRoute>
               }
             >

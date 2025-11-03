@@ -1,18 +1,45 @@
 export type Tier = 0 | 1 | 2 | 3 | 4 | 5;
 
-export interface AssessmentResponse {
-  questionId: string;
-  question: string;
-  answer: string | number | boolean;
+export type ExperienceLevel = 'none' | 'basic' | 'intermediate' | 'advanced';
+
+export interface AssessmentResponses {
+  // HTML/CSS/JavaScript
+  htmlCssJsKnowledge: ExperienceLevel;
+  
+  // React/Next.js
+  reactNextJsKnowledge: ExperienceLevel;
+  canBuildCrudApp: boolean;
+  
+  // Authentication
+  canImplementAuth: boolean;
+  canImplementGoogleAuth: boolean;
+  
+  // Database
+  databaseKnowledge: ExperienceLevel;
+  
+  // Backend Frameworks
+  expressHonoKnowledge: ExperienceLevel;
+  canBuildAuthenticatedApi: boolean;
+  canDocumentApi: boolean;
+  
+  // Laravel
+  laravelKnowledge: ExperienceLevel;
+  
+  // Golang
+  golangKnowledge: ExperienceLevel;
+  canBuildGoApi: boolean;
+  
+  // Deployment
+  canDeployApps: boolean;
 }
 
 export interface Candidate {
   _id: string;
   name: string;
   email: string;
-  phone?: string;
-  location?: string;
-  assessmentResponses: AssessmentResponse[];
+  phone: string;
+  country?: string;
+  assessmentResponses: AssessmentResponses;
   assignedTier: Tier;
   tierAssignedAt: string;
   notificationSent: boolean;
@@ -23,9 +50,9 @@ export interface Candidate {
 export interface CandidateRegistrationData {
   name: string;
   email: string;
-  phone?: string;
-  location?: string;
-  assessmentResponses: AssessmentResponse[];
+  phone: string;
+  country?: string;
+  assessmentResponses: AssessmentResponses;
 }
 
 export interface CandidateFilters {

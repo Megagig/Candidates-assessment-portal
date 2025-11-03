@@ -220,28 +220,99 @@ export const CandidateDetailPage: React.FC = () => {
             <Box>
               <Title order={3}>Assessment Responses</Title>
               <Text c="dimmed" size="sm">
-                {candidate.assessmentResponses.length} questions answered
+                Technical skills assessment
               </Text>
             </Box>
           </Group>
 
-          <Timeline active={candidate.assessmentResponses.length} bulletSize={24} lineWidth={2}>
-            {candidate.assessmentResponses.map((response, index) => (
-              <Timeline.Item
-                key={response.questionId}
-                bullet={<Text size="xs" fw={700}>{index + 1}</Text>}
-                title={
-                  <Text fw={500} size="sm">
-                    {response.question}
-                  </Text>
-                }
-              >
-                <Paper p="md" mt="xs" radius="sm" withBorder bg="gray.0" style={{ borderLeft: '3px solid var(--mantine-color-violet-5)' }}>
-                  <Text size="sm">{String(response.answer)}</Text>
-                </Paper>
-              </Timeline.Item>
-            ))}
-          </Timeline>
+          <Stack gap="md">
+            {/* HTML/CSS/JavaScript */}
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">HTML/CSS/JavaScript Knowledge</Text>
+              <Text size="sm" c="dimmed" tt="capitalize">{candidate.assessmentResponses.htmlCssJsKnowledge}</Text>
+            </Paper>
+
+            {/* React/Next.js */}
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">React/Next.js Knowledge</Text>
+              <Text size="sm" c="dimmed" tt="capitalize">{candidate.assessmentResponses.reactNextJsKnowledge}</Text>
+            </Paper>
+
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Can Build CRUD App</Text>
+              <Text size="sm" c={candidate.assessmentResponses.canBuildCrudApp ? 'green' : 'red'}>
+                {candidate.assessmentResponses.canBuildCrudApp ? 'Yes' : 'No'}
+              </Text>
+            </Paper>
+
+            {/* Authentication */}
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Can Implement Authentication</Text>
+              <Text size="sm" c={candidate.assessmentResponses.canImplementAuth ? 'green' : 'red'}>
+                {candidate.assessmentResponses.canImplementAuth ? 'Yes' : 'No'}
+              </Text>
+            </Paper>
+
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Can Implement Google Authentication</Text>
+              <Text size="sm" c={candidate.assessmentResponses.canImplementGoogleAuth ? 'green' : 'red'}>
+                {candidate.assessmentResponses.canImplementGoogleAuth ? 'Yes' : 'No'}
+              </Text>
+            </Paper>
+
+            {/* Database */}
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Database Knowledge</Text>
+              <Text size="sm" c="dimmed" tt="capitalize">{candidate.assessmentResponses.databaseKnowledge}</Text>
+            </Paper>
+
+            {/* Backend Frameworks */}
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Express/Hono Knowledge</Text>
+              <Text size="sm" c="dimmed" tt="capitalize">{candidate.assessmentResponses.expressHonoKnowledge}</Text>
+            </Paper>
+
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Can Build Authenticated API</Text>
+              <Text size="sm" c={candidate.assessmentResponses.canBuildAuthenticatedApi ? 'green' : 'red'}>
+                {candidate.assessmentResponses.canBuildAuthenticatedApi ? 'Yes' : 'No'}
+              </Text>
+            </Paper>
+
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Can Document API</Text>
+              <Text size="sm" c={candidate.assessmentResponses.canDocumentApi ? 'green' : 'red'}>
+                {candidate.assessmentResponses.canDocumentApi ? 'Yes' : 'No'}
+              </Text>
+            </Paper>
+
+            {/* Laravel */}
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Laravel Knowledge</Text>
+              <Text size="sm" c="dimmed" tt="capitalize">{candidate.assessmentResponses.laravelKnowledge}</Text>
+            </Paper>
+
+            {/* Golang */}
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Golang Knowledge</Text>
+              <Text size="sm" c="dimmed" tt="capitalize">{candidate.assessmentResponses.golangKnowledge}</Text>
+            </Paper>
+
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Can Build Go API</Text>
+              <Text size="sm" c={candidate.assessmentResponses.canBuildGoApi ? 'green' : 'red'}>
+                {candidate.assessmentResponses.canBuildGoApi ? 'Yes' : 'No'}
+              </Text>
+            </Paper>
+
+            {/* Deployment */}
+            <Paper p="md" radius="sm" withBorder>
+              <Text fw={600} size="sm" mb="xs">Can Deploy Apps</Text>
+              <Text size="sm" c={candidate.assessmentResponses.canDeployApps ? 'green' : 'red'}>
+                {candidate.assessmentResponses.canDeployApps ? 'Yes' : 'No'}
+              </Text>
+            </Paper>
+          </Stack>
         </Paper>
       </Stack>
 
