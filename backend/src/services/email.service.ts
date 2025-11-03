@@ -1,0 +1,422 @@
+import { Resend } from 'resend';
+import { SkillTier } from '../types/index.js';
+import { getTierName, getTierDescription } from './assessment.service.js';
+
+// Initialize Resend lazily (at runtime, not at module load)
+let resend: Resend | null = null;
+
+const getResendClient = (): Resend | null => {
+  if (resend) return resend;
+  
+  if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your-resend-api-key-here') {
+    resend = new Resend(process.env.RESEND_API_KEY);
+    return resend;
+  }
+  
+  return null;
+};
+
+/**
+ * Email configuration (lazy-loaded to ensure env vars are available)
+ */
+const getFromEmail = () => process.env.FROM_EMAIL || 'onboarding@resend.dev';
+const APP_NAME = 'MegaHub Candidates Assessment';
+const getAppUrl = () => process.env.APP_URL || 'http://localhost:5173';
+
+/**
+ * Generate HTML email template for tier result notification
+ */
+const generateTierResultEmail = (
+  candidateName: string,
+  tier: SkillTier
+): string => {
+  const tierName = getTierName(tier);
+  const tierDescription = getTierDescription(tier);
+
+  // Tier-specific colors and emojis
+  const tierColors: Record<SkillTier, string> = {
+    [SkillTier.TIER_0]: '#6B7280', // Gray
+    [SkillTier.TIER_1]: '#3B82F6', // Blue
+    [SkillTier.TIER_2]: '#10B981', // Green
+    [SkillTier.TIER_3]: '#F59E0B', // Amber
+    [SkillTier.TIER_4]: '#8B5CF6', // Purple
+    [SkillTier.TIER_5]: '#EF4444', // Red
+  };
+
+  const tierEmojis: Record<SkillTier, string> = {
+    [SkillTier.TIER_0]: '🌱',
+    [SkillTier.TIER_1]: '💻',
+    [SkillTier.TIER_2]: '🚀',
+    [SkillTier.TIER_3]: '⚡',
+    [SkillTier.TIER_4]: '🏆',
+    [SkillTier.TIER_5]: '👑',
+  };
+
+  const color = tierColors[tier];
+  const emoji = tierEmojis[tier];
+
+  return `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Your Skill Assessment Results - ${APP_NAME}</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; color: #1f2937;">
+      <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <!-- Header -->
+        <div style="background-color: #ffffff; border-radius: 8px 8px 0 0; padding: 40px 30px; text-align: center; border-bottom: 4px solid ${color};">
+          <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #111827;">
+            ${APP_NAME}
+          </h1>
+          <p style="margin: 10px 0 0; font-size: 14px; color: #6b7280;">
+            Skill Assessment Results
+          </p>
+        </div>
+
+        <!-- Main Content -->
+        <div style="background-color: #ffffff; padding: 40px 30px;">
+          <!-- Greeting -->
+          <p style="margin: 0 0 20px; font-size: 16px; color: #374151;">
+            Hello <strong>${candidateName}</strong>,
+          </p>
+
+                    <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+            Thank you for completing the MegaHub skill assessment! We've carefully evaluated your responses and are excited to share your results.
+          </p>
+
+          <!-- Tier Badge -->
+          <div style="background: linear-gradient(135deg, ${color}15 0%, ${color}30 100%); border-radius: 12px; padding: 30px; margin-bottom: 30px; text-align: center; border: 2px solid ${color};">
+            <div style="font-size: 48px; margin-bottom: 10px;">
+              ${emoji}
+            </div>
+            <h2 style="margin: 0 0 10px; font-size: 32px; font-weight: 700; color: ${color};">
+              Tier ${tier}
+            </h2>
+            <p style="margin: 0; font-size: 20px; font-weight: 600; color: #111827;">
+              ${tierName}
+            </p>
+          </div>
+
+          <!-- Description -->
+          <div style="background-color: #f9fafb; border-left: 4px solid ${color}; border-radius: 4px; padding: 20px; margin-bottom: 30px;">
+            <h3 style="margin: 0 0 10px; font-size: 16px; font-weight: 600; color: #111827;">
+              What This Means:
+            </h3>
+            <p style="margin: 0; font-size: 14px; color: #374151; line-height: 1.6;">
+              ${tierDescription}
+            </p>
+          </div>
+
+          <!-- Next Steps -->
+          <div style="margin-bottom: 30px;">
+            <h3 style="margin: 0 0 15px; font-size: 18px; font-weight: 600; color: #111827;">
+              Next Steps:
+            </h3>
+            <ul style="margin: 0; padding-left: 20px; color: #374151; line-height: 1.8;">
+              <li>Our team will review your profile and tier assignment</li>
+              <li>We'll match you with suitable projects based on your skill level</li>
+              <li>You'll receive an email within 2-3 business days with further instructions</li>
+              <li>Keep an eye on your inbox for exciting opportunities!</li>
+            </ul>
+          </div>
+
+          <!-- CTA Button -->
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${getAppUrl()}" style="display: inline-block; background-color: ${color}; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-weight: 600; font-size: 16px;">
+              View Your Dashboard
+            </a>
+          </div>
+
+          <!-- Contact Info -->
+          <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+            If you have any questions or need assistance, please don't hesitate to reach out to our team at 
+            <a href="mailto:support@megahub.com" style="color: ${color}; text-decoration: none;">support@megahub.com</a>
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #f9fafb; border-radius: 0 0 8px 8px; padding: 30px; text-align: center;">
+          <p style="margin: 0 0 10px; font-size: 14px; color: #6b7280;">
+            © ${new Date().getFullYear()} MegaHub. All rights reserved.
+          </p>
+          <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+            This email was sent to you because you registered for our skill assessment program.
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+/**
+ * Send tier result notification email to candidate
+ */
+export const sendTierResultEmail = async (
+  candidateEmail: string,
+  candidateName: string,
+  tier: SkillTier
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const resendClient = getResendClient();
+    
+    // Check if Resend is configured
+    if (!resendClient) {
+      console.warn('RESEND_API_KEY not configured. Email sending is disabled.');
+      // Return success so notification status updates to "Sent" in development
+      return { success: true };
+    }
+
+    const tierName = getTierName(tier);
+    const htmlContent = generateTierResultEmail(candidateName, tier);
+
+    const fromEmail = getFromEmail();
+
+    const { data, error } = await resendClient.emails.send({
+      from: fromEmail,
+      to: candidateEmail,
+      subject: `Your Skill Assessment Results - ${tierName} (Tier ${tier})`,
+      html: htmlContent,
+    });
+
+    if (error) {
+      console.error('Failed to send email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+};
+
+/**
+ * Resend tier result email (for admin manual trigger)
+ */
+export const resendTierResultEmail = async (
+  candidateEmail: string,
+  candidateName: string,
+  tier: SkillTier
+): Promise<{ success: boolean; error?: string }> => {
+  // Same implementation as sendTierResultEmail
+  return sendTierResultEmail(candidateEmail, candidateName, tier);
+};
+
+/**
+ * Send admin approval notification email
+ */
+export const sendAdminApprovalEmail = async (
+  adminEmail: string,
+  adminName: string
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const resendClient = getResendClient();
+    
+    if (!resendClient) {
+      console.warn('RESEND_API_KEY not configured. Email sending is disabled.');
+      return { success: true };
+    }
+
+    const loginUrl = `${getAppUrl()}/admin/login`;
+    const fromEmail = getFromEmail();
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Account Approved - ${APP_NAME}</title>
+      </head>
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; color: #1f2937;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background-color: #ffffff; border-radius: 8px 8px 0 0; padding: 40px 30px; text-align: center; border-bottom: 4px solid #10b981;">
+            <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #111827;">
+              ${APP_NAME}
+            </h1>
+            <p style="margin: 10px 0 0; font-size: 14px; color: #6b7280;">
+              Admin Account Approved
+            </p>
+          </div>
+
+          <div style="background-color: #ffffff; padding: 40px 30px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <div style="font-size: 64px; margin-bottom: 10px;">🎉</div>
+              <h2 style="margin: 0 0 10px; font-size: 24px; font-weight: 700; color: #10b981;">
+                Congratulations!
+              </h2>
+            </div>
+
+            <p style="margin: 0 0 20px; font-size: 16px; color: #374151;">
+              Hello <strong>${adminName}</strong>,
+            </p>
+
+            <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Great news! Your admin account has been approved by our super admin team. You can now log in and start managing candidates.
+            </p>
+
+            <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; border-radius: 4px; padding: 20px; margin-bottom: 30px;">
+              <h3 style="margin: 0 0 10px; font-size: 16px; font-weight: 600; color: #111827;">
+                What You Can Do Now:
+              </h3>
+              <ul style="margin: 0; padding-left: 20px; color: #374151; line-height: 1.8;">
+                <li>Access the admin dashboard</li>
+                <li>View and manage candidate registrations</li>
+                <li>Export candidate data</li>
+                <li>View analytics and statistics</li>
+              </ul>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${loginUrl}" style="display: inline-block; background-color: #10b981; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-weight: 600; font-size: 16px;">
+                Log In to Dashboard
+              </a>
+            </div>
+
+            <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+              If you have any questions, please contact us at 
+              <a href="mailto:support@megahub.com" style="color: #10b981; text-decoration: none;">support@megahub.com</a>
+            </p>
+          </div>
+
+          <div style="background-color: #f9fafb; border-radius: 0 0 8px 8px; padding: 30px; text-align: center;">
+            <p style="margin: 0 0 10px; font-size: 14px; color: #6b7280;">
+              © ${new Date().getFullYear()} MegaHub. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const { error } = await resendClient.emails.send({
+      from: fromEmail,
+      to: adminEmail,
+      subject: `Admin Account Approved - ${APP_NAME}`,
+      html: htmlContent,
+    });
+
+    if (error) {
+      console.error('Failed to send approval email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending approval email:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+};
+
+/**
+ * Send admin rejection notification email
+ */
+export const sendAdminRejectionEmail = async (
+  adminEmail: string,
+  adminName: string,
+  reason: string
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const resendClient = getResendClient();
+    
+    if (!resendClient) {
+      console.warn('RESEND_API_KEY not configured. Email sending is disabled.');
+      return { success: true };
+    }
+
+    const contactUrl = `${getAppUrl()}/contact`;
+    const fromEmail = getFromEmail();
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Registration Update - ${APP_NAME}</title>
+      </head>
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; color: #1f2937;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background-color: #ffffff; border-radius: 8px 8px 0 0; padding: 40px 30px; text-align: center; border-bottom: 4px solid #ef4444;">
+            <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #111827;">
+              ${APP_NAME}
+            </h1>
+            <p style="margin: 10px 0 0; font-size: 14px; color: #6b7280;">
+              Admin Registration Update
+            </p>
+          </div>
+
+          <div style="background-color: #ffffff; padding: 40px 30px;">
+            <p style="margin: 0 0 20px; font-size: 16px; color: #374151;">
+              Hello <strong>${adminName}</strong>,
+            </p>
+
+            <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              Thank you for your interest in becoming an admin for ${APP_NAME}. After careful review, we regret to inform you that we are unable to approve your admin registration at this time.
+            </p>
+
+            <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; border-radius: 4px; padding: 20px; margin-bottom: 30px;">
+              <h3 style="margin: 0 0 10px; font-size: 16px; font-weight: 600; color: #111827;">
+                Reason:
+              </h3>
+              <p style="margin: 0; font-size: 14px; color: #374151; line-height: 1.6;">
+                ${reason}
+              </p>
+            </div>
+
+            <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+              If you believe this decision was made in error or would like to discuss this further, please don't hesitate to contact our support team.
+            </p>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${contactUrl}" style="display: inline-block; background-color: #3b82f6; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-weight: 600; font-size: 16px;">
+                Contact Support
+              </a>
+            </div>
+
+            <p style="margin: 30px 0 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
+              For questions or concerns, reach out to us at 
+              <a href="mailto:support@megahub.com" style="color: #3b82f6; text-decoration: none;">support@megahub.com</a>
+            </p>
+          </div>
+
+          <div style="background-color: #f9fafb; border-radius: 0 0 8px 8px; padding: 30px; text-align: center;">
+            <p style="margin: 0 0 10px; font-size: 14px; color: #6b7280;">
+              © ${new Date().getFullYear()} MegaHub. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const { error } = await resendClient.emails.send({
+      from: fromEmail,
+      to: adminEmail,
+      subject: `Admin Registration Update - ${APP_NAME}`,
+      html: htmlContent,
+    });
+
+    if (error) {
+      console.error('Failed to send rejection email:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending rejection email:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+};
