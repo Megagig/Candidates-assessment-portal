@@ -1,14 +1,40 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Title,
+  Text,
+  Grid,
+  Paper,
+  Group,
+  Stack,
+  Button,
+  TextInput,
+  Select,
+  Badge,
+  ActionIcon,
+  Box,
+  Loader,
+  Center,
+  Pagination,
+} from '@mantine/core';
+import {
+  IconSearch,
+  IconFilter,
+  IconDownload,
+  IconX,
+  IconCalendar,
+  IconUsers,
+  IconFilterOff,
+} from '@tabler/icons-react';
 import { useCandidates } from '../../hooks/useCandidates';
 import { useExportCandidates } from '../../hooks/useExportCandidates';
 import { useCandidateStore } from '../../stores';
-import { Loading, EmptyState, Button } from '../../components/ui';
-import { CandidateTable, SearchBar, FilterBar } from '../../components/candidate';
+import { CandidateTable } from '../../components/candidate';
 import type { Tier } from '../../types';
 
 export const CandidatesListPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTier, setSelectedTier] = useState<Tier | ''>('');
+  const [selectedTier, setSelectedTier] = useState<string>('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -30,7 +56,7 @@ export const CandidatesListPage: React.FC = () => {
     page: currentPage,
     limit: 10,
     ...(debouncedSearch && { search: debouncedSearch }),
-    ...(selectedTier && { tier: selectedTier }),
+    ...(selectedTier && { tier: parseInt(selectedTier) as Tier }),
     ...(startDate && { startDate }),
     ...(endDate && { endDate }),
   };
@@ -50,15 +76,28 @@ export const CandidatesListPage: React.FC = () => {
   };
 
   if (isLoading && !data) {
-    return <Loading fullScreen text="Loading candidates..." />;
+    return (
+      <Center h="80vh">
+        <Stack align="center" gap="md">
+          <Loader size="xl" />
+          <Text c="dimmed">Loading candidates...</Text>
+        </Stack>
+      </Center>
+    );
   }
 
   if (error) {
     return (
-      <EmptyState
-        title="Failed to load candidates"
-        description="There was an error loading the candidates. Please try again."
-      />
+      <Container size="sm" py="xl">
+        <Paper p="xl" radius="md" withBorder>
+          <Stack align="center" gap="md">
+            <Title order={3}>Failed to load candidates</Title>
+            <Text c="dimmed" ta="center">
+              There was an error loading the candidates. Please try again.
+            </Text>
+          </Stack>
+        </Paper>
+      </Container>
     );
   }
 
@@ -66,131 +105,162 @@ export const CandidatesListPage: React.FC = () => {
   const hasFilters = searchQuery || selectedTier || startDate || endDate;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Candidates
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-            Total: {data?.pagination.total || 0} candidates
-          </p>
-        </div>
-        <Button
-          onClick={handleExport}
-          isLoading={isExporting}
-          variant="secondary"
-          className="w-full sm:w-auto"
-        >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Export CSV
-        </Button>
-      </div>
+    <Container size="xl" py="xl">
+      <Stack gap="xl">
+        {/* Header */}
+        <Group justify="space-between" align="flex-start">
+          <Box>
+            <Group gap="sm" mb="xs">
+              <Title order={1}>Candidates</Title>
+              <Badge size="lg" variant="light" color="blue" leftSection={<IconUsers size={14} />}>
+                {data?.pagination.total || 0} Total
+              </Badge>
+              {hasFilters && (
+                <Badge size="lg" variant="light" color="violet" leftSection={<IconFilter size={14} />}>
+                  {candidates.length} Filtered
+                </Badge>
+              )}
+            </Group>
+            <Text c="dimmed" size="sm">
+              Browse and manage all candidate registrations
+            </Text>
+          </Box>
+          <Button
+            leftSection={<IconDownload size={18} />}
+            onClick={handleExport}
+            loading={isExporting}
+            variant="light"
+          >
+            Export CSV
+          </Button>
+        </Group>
 
-      {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <SearchBar
-            value={searchQuery}
-            onChange={setSearchQuery}
-          />
-          <FilterBar
-            selectedTier={selectedTier}
-            onTierChange={(tier) => setSelectedTier(tier)}
-            onClearFilters={handleClearFilters}
-          />
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              From Date
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              To Date
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-            />
-          </div>
-        </div>
-        {hasFilters && (
-          <div className="mt-4">
-            <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Clear All Filters
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-        {candidates.length > 0 ? (
-          <>
-            <CandidateTable candidates={candidates} />
-            
-            {/* Pagination */}
-            {data && data.pagination.pages > 1 && (
-              <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Page {data.pagination.page} of {data.pagination.pages}
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setPage(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setPage(currentPage + 1)}
-                      disabled={currentPage === data.pagination.pages}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              </div>
+        {/* Filters */}
+        <Paper p="xl" radius="md" withBorder>
+          <Group justify="space-between" mb="lg">
+            <Group gap="sm">
+              <IconFilter size={20} />
+              <Title order={4}>Filters</Title>
+            </Group>
+            {hasFilters && (
+              <Button
+                variant="subtle"
+                color="red"
+                size="xs"
+                leftSection={<IconFilterOff size={16} />}
+                onClick={handleClearFilters}
+              >
+                Clear All
+              </Button>
             )}
-          </>
-        ) : (
-          <EmptyState
-            title={hasFilters ? 'No candidates found' : 'No candidates yet'}
-            description={
-              hasFilters
-                ? 'Try adjusting your search or filters'
-                : 'New candidate registrations will appear here'
-            }
-            action={
-              hasFilters
-                ? {
-                    label: 'Clear Filters',
-                    onClick: handleClearFilters,
-                  }
-                : undefined
-            }
-          />
-        )}
-      </div>
-    </div>
+          </Group>
+
+          <Grid>
+            <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+              <TextInput
+                label="Search"
+                placeholder="Name, email, phone..."
+                leftSection={<IconSearch size={16} />}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                rightSection={
+                  searchQuery && (
+                    <ActionIcon variant="subtle" onClick={() => setSearchQuery('')}>
+                      <IconX size={16} />
+                    </ActionIcon>
+                  )
+                }
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+              <Select
+                label="Tier Filter"
+                placeholder="All tiers"
+                data={[
+                  { value: '', label: 'All Tiers' },
+                  { value: '0', label: 'Tier 0' },
+                  { value: '1', label: 'Tier 1' },
+                  { value: '2', label: 'Tier 2' },
+                  { value: '3', label: 'Tier 3' },
+                  { value: '4', label: 'Tier 4' },
+                  { value: '5', label: 'Tier 5' },
+                ]}
+                value={selectedTier}
+                onChange={(value) => setSelectedTier(value || '')}
+                clearable
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+              <TextInput
+                label="From Date"
+                type="date"
+                leftSection={<IconCalendar size={16} />}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+              <TextInput
+                label="To Date"
+                type="date"
+                leftSection={<IconCalendar size={16} />}
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </Grid.Col>
+          </Grid>
+        </Paper>
+
+        {/* Table */}
+        <Paper radius="md" withBorder>
+          {candidates.length > 0 ? (
+            <>
+              <Box style={{ overflowX: 'auto' }}>
+                <CandidateTable candidates={candidates} />
+              </Box>
+
+              {/* Pagination */}
+              {data && data.pagination.pages > 1 && (
+                <Box p="lg" style={{ borderTop: '1px solid var(--mantine-color-gray-3)' }}>
+                  <Group justify="space-between" align="center">
+                    <Text size="sm" c="dimmed">
+                      Showing {((currentPage - 1) * 10) + 1} to {Math.min(currentPage * 10, data.pagination.total)} of {data.pagination.total} results
+                    </Text>
+                    <Pagination
+                      total={data.pagination.pages}
+                      value={currentPage}
+                      onChange={setPage}
+                      size="sm"
+                    />
+                  </Group>
+                </Box>
+              )}
+            </>
+          ) : (
+            <Box p="xl">
+              <Stack align="center" gap="md" py="xl">
+                <IconUsers size={64} stroke={1.5} color="var(--mantine-color-gray-4)" />
+                <Title order={3} c="dimmed">
+                  {hasFilters ? 'No candidates found' : 'No candidates yet'}
+                </Title>
+                <Text c="dimmed" ta="center" size="sm">
+                  {hasFilters
+                    ? 'Try adjusting your search or filters to find what you\'re looking for'
+                    : 'New candidate registrations will appear here'}
+                </Text>
+                {hasFilters && (
+                  <Button variant="light" onClick={handleClearFilters} leftSection={<IconFilterOff size={16} />}>
+                    Clear Filters
+                  </Button>
+                )}
+              </Stack>
+            </Box>
+          )}
+        </Paper>
+      </Stack>
+    </Container>
   );
 };

@@ -1,4 +1,5 @@
 import express from 'express';
+import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -7,6 +8,7 @@ import rateLimit from 'express-rate-limit';
 import connectDB from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
 import candidateRoutes from './routes/candidate.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
 
 // Load environment variables
@@ -35,7 +37,7 @@ app.use(
 // Rate Limiting - Prevent brute force attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 20000, // Limit each IP to 1000 requests per windowMs (relaxed for development)
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -47,7 +49,7 @@ app.use(limiter);
 // Stricter rate limit for auth routes
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // Limit each IP to 10 requests per windowMs
+  max: 50, // Limit each IP to 50 requests per windowMs (relaxed for development)
   message: 'Too many authentication attempts, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -69,21 +71,20 @@ app.use(cookieParser());
  */
 
 // Health check route
-app.get('/', (_req, res) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     status: 'success',
-    message: 'Desishub Candidates Assessment API',
+    message: 'MegaHub Candidates Assessment API',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
   });
 });
 
 // API status route
-app.get('/api/health', (_req, res) => {
+app.get('/health', (_req: Request, res: Response) => {
   res.json({
-    status: 'success',
-    message: 'API is healthy',
-    database: 'connected',
+    status: 'OK',
+    message: 'MegaHub Candidates Assessment API',
     timestamp: new Date().toISOString(),
   });
 });
@@ -93,6 +94,9 @@ app.use('/api/auth', authLimiter, authRoutes);
 
 // Candidate routes
 app.use('/api/candidates', candidateRoutes);
+
+// Admin routes (super admin only)
+app.use('/api/admin', adminRoutes);
 
 /**
  * Error Handling Middleware

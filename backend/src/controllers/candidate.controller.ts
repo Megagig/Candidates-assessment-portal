@@ -78,12 +78,10 @@ export const registerCandidate = async (
     };
 
     res.status(201).json({
-      status: 'success',
+      success: true,
       message: 'Candidate registered successfully',
-      data: {
-        candidate: candidateResponse,
-        tierInfo,
-      },
+      data: candidateResponse,
+      tierInfo,
     });
   } catch (error) {
     next(error);
@@ -170,17 +168,15 @@ export const getAllCandidates = async (
     const hasPrevPage = pageNum > 1;
 
     res.status(200).json({
-      status: 'success',
-      data: {
-        candidates,
-        pagination: {
-          total,
-          page: pageNum,
-          limit: limitNum,
-          totalPages,
-          hasNextPage,
-          hasPrevPage,
-        },
+      success: true,
+      data: candidates,
+      pagination: {
+        total,
+        page: pageNum,
+        pages: totalPages,
+        limit: limitNum,
+        hasNextPage,
+        hasPrevPage,
       },
     });
   } catch (error) {
@@ -209,11 +205,9 @@ export const getCandidateById = async (
     const tierInfo = getTierInfo(candidate.assignedTier);
 
     res.status(200).json({
-      status: 'success',
-      data: {
-        candidate,
-        tierInfo,
-      },
+      success: true,
+      data: candidate,
+      tierInfo,
     });
   } catch (error) {
     next(error);
@@ -247,11 +241,9 @@ export const updateCandidate = async (
     await candidate.save();
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       message: 'Candidate updated successfully',
-      data: {
-        candidate,
-      },
+      data: candidate,
     });
   } catch (error) {
     next(error);
@@ -277,7 +269,7 @@ export const deleteCandidate = async (
     }
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       message: 'Candidate deleted successfully',
     });
   } catch (error) {
@@ -317,7 +309,7 @@ export const getCandidateStats = async (
       tier: item._id as SkillTier,
       tierName: getTierInfo(item._id).name,
       count: item.count,
-      percentage: totalCandidates > 0 
+      percentage: totalCandidates > 0
         ? ((item.count / totalCandidates) * 100).toFixed(2)
         : '0.00',
     }));
@@ -354,7 +346,7 @@ export const getCandidateStats = async (
     ]);
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       data: {
         totalCandidates,
         recentRegistrations,
@@ -470,7 +462,7 @@ export const resendEmail = async (
     await candidate.save();
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       message: 'Email sent successfully',
     });
   } catch (error) {

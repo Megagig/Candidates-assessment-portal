@@ -1,19 +1,30 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { queryClient } from './lib/queryClient';
 import { useAuthStore } from './stores';
-import { ThemeProvider } from './components/theme-provider';
-import { Toast } from './components/ui';
-import { ProtectedRoute } from './components/auth';
-import { AdminLayout } from './components/AdminLayout';
+import { theme } from './theme/mantine-theme';
+import { ProtectedRoute, SuperAdminRoute } from './components/auth';
+import { MantineAdminLayout } from './components/MantineAdminLayout';
 
 // Public pages
-import { HomePage, RegisterPage, RegistrationSuccessPage } from './pages/public';
+import { HomePage, RegisterPage, RegistrationSuccessPage, ContactPage } from './pages/public';
 
 // Admin pages
-import { LoginPage, DashboardPage, CandidatesListPage, CandidateDetailPage } from './pages/admin';
+import {
+  LoginPage,
+  AdminRegisterPage,
+  DashboardPage,
+  CandidatesListPage,
+  CandidateDetailPage,
+  PendingAdminsPage,
+} from './pages/admin';
 
+// Mantine styles
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import './App.css';
 
 function App() {
@@ -24,24 +35,27 @@ function App() {
   }, [checkAuth]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="system" storageKey="desishub-theme">
+    <MantineProvider theme={theme} defaultColorScheme="auto">
+      <Notifications position="top-right" zIndex={1000} />
+      <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/registration-success" element={<RegistrationSuccessPage />} />
+            <Route path="/contact" element={<ContactPage />} />
 
-            {/* Admin Login */}
+            {/* Admin Login & Registration */}
             <Route path="/admin/login" element={<LoginPage />} />
+            <Route path="/admin/register" element={<AdminRegisterPage />} />
 
             {/* Protected Admin Routes */}
             <Route
               path="/admin"
               element={
                 <ProtectedRoute>
-                  <AdminLayout />
+                  <MantineAdminLayout />
                 </ProtectedRoute>
               }
             >
@@ -49,17 +63,22 @@ function App() {
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="candidates" element={<CandidatesListPage />} />
               <Route path="candidates/:id" element={<CandidateDetailPage />} />
+              <Route
+                path="pending-admins"
+                element={
+                  <SuperAdminRoute>
+                    <PendingAdminsPage />
+                  </SuperAdminRoute>
+                }
+              />
             </Route>
 
             {/* 404 */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-
-          {/* Global Toast Notifications */}
-          <Toast />
         </BrowserRouter>
-      </ThemeProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </MantineProvider>
   );
 }
 

@@ -1,21 +1,26 @@
-import type { AssessmentResponse } from '../types';
-import { ASSESSMENT_QUESTIONS } from '../data/assessmentQuestions';
+import type { AssessmentResponses, ExperienceLevel } from '../types';
 
 /**
- * Transform raw assessment answers from the form into an array of AssessmentResponse objects
+ * Transform raw assessment answers from the form into AssessmentResponses object
  */
 export const transformAssessmentAnswers = (
   answers: Record<string, string>
-): AssessmentResponse[] => {
-  return ASSESSMENT_QUESTIONS.map((question) => {
-    const answer = answers[question.id] || '';
-    
-    return {
-      questionId: question.id,
-      question: question.question,
-      answer: answer,
-    };
-  });
+): AssessmentResponses => {
+  return {
+    htmlCssJsKnowledge: (answers.htmlCssJsKnowledge || 'none') as ExperienceLevel,
+    reactNextJsKnowledge: (answers.reactNextJsKnowledge || 'none') as ExperienceLevel,
+    canBuildCrudApp: answers.canBuildCrudApp === 'true' || answers.canBuildCrudApp === 'yes',
+    canImplementAuth: answers.canImplementAuth === 'true' || answers.canImplementAuth === 'yes',
+    canImplementGoogleAuth: answers.canImplementGoogleAuth === 'true' || answers.canImplementGoogleAuth === 'yes',
+    databaseKnowledge: (answers.databaseKnowledge || 'none') as ExperienceLevel,
+    expressHonoKnowledge: (answers.expressHonoKnowledge || 'none') as ExperienceLevel,
+    canBuildAuthenticatedApi: answers.canBuildAuthenticatedApi === 'true' || answers.canBuildAuthenticatedApi === 'yes',
+    canDocumentApi: answers.canDocumentApi === 'true' || answers.canDocumentApi === 'yes',
+    laravelKnowledge: (answers.laravelKnowledge || 'none') as ExperienceLevel,
+    golangKnowledge: (answers.golangKnowledge || 'none') as ExperienceLevel,
+    canBuildGoApi: answers.canBuildGoApi === 'true' || answers.canBuildGoApi === 'yes',
+    canDeployApps: answers.canDeployApps === 'true' || answers.canDeployApps === 'yes',
+  };
 };
 
 /**

@@ -34,6 +34,11 @@ const userSchema = new Schema<IUser>(
       enum: Object.values(UserRole),
       default: UserRole.ADMIN,
     },
+    approved: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   {
     timestamps: true,

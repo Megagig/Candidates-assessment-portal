@@ -55,23 +55,17 @@ export const register = async (
       throw new ConflictError('User with this email already exists');
     }
 
-    // Create new user
+    // Create new user (not approved by default)
     const user = await User.create({
       name,
       email,
       password,
       role,
+      approved: false, // Requires super admin approval
     });
 
-    // Generate token
-    const token = generateToken(
-      (user._id as { toString: () => string }).toString(),
-      user.email,
-      user.role
-    );
-
-    // Set cookie
-    setCookieToken(res, token);
+    // Don't generate token or set cookie for unapproved users
+    // Just return success message
 
     // Prepare user response (password is excluded by model transform)
     const userResponse: IUserResponse = {
@@ -79,16 +73,15 @@ export const register = async (
       name: user.name,
       email: user.email,
       role: user.role,
+      approved: user.approved,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
 
     res.status(201).json({
-      status: 'success',
-      message: 'User registered successfully',
-      data: {
-        user: userResponse,
-      },
+      success: true,
+      message: 'Registration submitted successfully. Your account is pending approval from a super admin.',
+      user: userResponse,
     });
   } catch (error) {
     next(error);
@@ -114,6 +107,11 @@ export const login = async (
       throw new AuthenticationError('Invalid email or password');
     }
 
+    // Check if user is approved
+    if (!user.approved && user.role !== 'super_admin') {
+      throw new AuthenticationError('Your account is pending approval. Please wait for admin verification.');
+    }
+
     // Check password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
@@ -136,16 +134,15 @@ export const login = async (
       name: user.name,
       email: user.email,
       role: user.role,
+      approved: user.approved,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       message: 'Login successful',
-      data: {
-        user: userResponse,
-      },
+      user: userResponse,
     });
   } catch (error) {
     next(error);
@@ -171,7 +168,7 @@ export const logout = async (
     });
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       message: 'Logout successful',
     });
   } catch (error) {
@@ -205,15 +202,14 @@ export const getMe = async (
       name: user.name,
       email: user.email,
       role: user.role,
+      approved: user.approved,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
 
     res.status(200).json({
-      status: 'success',
-      data: {
-        user: userResponse,
-      },
+      success: true,
+      user: userResponse,
     });
   } catch (error) {
     next(error);

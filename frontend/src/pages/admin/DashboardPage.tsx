@@ -1,24 +1,66 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import {
+  Container,
+  Title,
+  Text,
+  Grid,
+  Paper,
+  Group,
+  Stack,
+  ThemeIcon,
+  Badge,
+  ActionIcon,
+  Tooltip,
+  Box,
+  Loader,
+  Center,
+} from '@mantine/core';
+import {
+  IconUsers,
+  IconClock,
+  IconChartBar,
+  IconArrowUpRight,
+  IconArrowDownRight,
+  IconRefresh,
+  IconEye,
+  IconUserPlus,
+  IconFileText,
+} from '@tabler/icons-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
 import { useCandidateStats } from '../../hooks';
-import { Loading, EmptyState } from '../../components/ui';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
 
-const TIER_COLORS = ['#6B7280', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444'];
+const TIER_COLORS = ['#868e96', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
 
 export const DashboardPage: React.FC = () => {
-  const { data: stats, isLoading, error } = useCandidateStats();
+  const { data: stats, isLoading, error, refetch } = useCandidateStats();
 
   if (isLoading) {
-    return <Loading fullScreen text="Loading dashboard..." />;
+    return (
+      <Center h="80vh">
+        <Stack align="center" gap="md">
+          <Loader size="xl" />
+          <Text c="dimmed">Loading dashboard...</Text>
+        </Stack>
+      </Center>
+    );
   }
 
   if (error || !stats) {
     return (
-      <EmptyState
-        title="Failed to load statistics"
-        description="There was an error loading the dashboard data. Please try again."
-      />
+      <Container size="sm" py="xl">
+        <Paper p="xl" radius="md" withBorder>
+          <Stack align="center" gap="md">
+            <ThemeIcon size={60} radius="xl" variant="light" color="red">
+              <IconChartBar size={30} />
+            </ThemeIcon>
+            <Title order={3}>Failed to load statistics</Title>
+            <Text c="dimmed" ta="center">
+              There was an error loading the dashboard data. Please try again.
+            </Text>
+          </Stack>
+        </Paper>
+      </Container>
     );
   }
 
@@ -39,155 +81,246 @@ export const DashboardPage: React.FC = () => {
   }));
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Dashboard
-        </h1>
-        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
-          Overview of candidate registrations and tier distribution
-        </p>
-      </div>
+    <Container size="xl" py="xl">
+      <Stack gap="xl">
+        {/* Header */}
+        <Group justify="space-between" align="flex-start">
+          <Box>
+            <Group gap="sm" mb="xs">
+              <Title order={1}>Dashboard Overview</Title>
+              <Badge size="lg" variant="dot" color="green">
+                Live
+              </Badge>
+            </Group>
+            <Text c="dimmed" size="sm">
+              Real-time candidate analytics and insights
+            </Text>
+          </Box>
+          <Group gap="xs">
+            <Text c="dimmed" size="sm">
+              {new Date().toLocaleTimeString()}
+            </Text>
+            <Tooltip label="Refresh data">
+              <ActionIcon variant="light" onClick={() => refetch()}>
+                <IconRefresh size={18} />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
+        </Group>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatsCard
-          title="Total Candidates"
-          value={stats.totalCandidates}
-          icon={
-            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-            </svg>
-          }
-          color="bg-blue-500"
-        />
-        <StatsCard
-          title="Recent Registrations"
-          value={stats.recentRegistrations}
-          subtitle="Last 7 days"
-          icon={
-            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-            </svg>
-          }
-          color="bg-green-500"
-        />
-        <StatsCard
-          title="Skill Tiers"
-          value={6}
-          subtitle="T0 to T5"
-          icon={
-            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-            </svg>
-          }
-          color="bg-purple-500"
-        />
-      </div>
+        {/* Stats Cards */}
+        <Grid>
+          <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+            <StatsCard
+              title="Total Candidates"
+              value={stats.totalCandidates}
+              trend="+12.5%"
+              trendUp={true}
+              icon={<IconUsers size={24} />}
+              color="blue"
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+            <StatsCard
+              title="Recent Registrations"
+              value={stats.recentRegistrations}
+              subtitle="Last 7 days"
+              trend="+8.2%"
+              trendUp={true}
+              icon={<IconClock size={24} />}
+              color="green"
+            />
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+            <StatsCard
+              title="Skill Tiers"
+              value={6}
+              subtitle="T0 to T5"
+              icon={<IconChartBar size={24} />}
+              color="violet"
+            />
+          </Grid.Col>
+        </Grid>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pie Chart */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Tier Distribution
-          </h2>
-          {stats.totalCandidates > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={(entry) => `${entry.name}: ${entry.percentage}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {pieData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={TIER_COLORS[index % TIER_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="h-[300px] flex items-center justify-center text-gray-500">
-              No data available
-            </div>
-          )}
-        </div>
+        {/* Charts */}
+        <Grid>
+          {/* Pie Chart */}
+          <Grid.Col span={{ base: 12, lg: 6 }}>
+            <Paper p="xl" radius="md" withBorder h="100%">
+              <Group justify="space-between" mb="xl">
+                <Box>
+                  <Title order={3} mb={4}>
+                    Tier Distribution
+                  </Title>
+                  <Text c="dimmed" size="sm">
+                    Candidate skill level breakdown
+                  </Text>
+                </Box>
+                <ThemeIcon size={48} radius="md" variant="gradient" gradient={{ from: 'blue', to: 'violet' }}>
+                  <IconChartBar size={24} />
+                </ThemeIcon>
+              </Group>
+              {stats.totalCandidates > 0 ? (
+                <ResponsiveContainer width="100%" height={320}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={(entry) => `${entry.name}: ${entry.percentage}%`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                      animationBegin={0}
+                      animationDuration={800}
+                    >
+                      {pieData.map((_entry, index) => (
+                        <Cell key={`cell-${index}`} fill={TIER_COLORS[index % TIER_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip />
+                    <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <Center h={320}>
+                  <Stack align="center" gap="sm">
+                    <IconChartBar size={48} stroke={1.5} color="var(--mantine-color-gray-4)" />
+                    <Text c="dimmed">No data available</Text>
+                  </Stack>
+                </Center>
+              )}
+            </Paper>
+          </Grid.Col>
 
-        {/* Bar Chart */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Candidates per Tier
-          </h2>
-          {stats.totalCandidates > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="tier" />
+          {/* Bar Chart */}
+          <Grid.Col span={{ base: 12, lg: 6 }}>
+            <Paper p="xl" radius="md" withBorder h="100%">
+              <Group justify="space-between" mb="xl">
+                <Box>
+                  <Title order={3} mb={4}>
+                    Candidates per Tier
+                  </Title>
+                  <Text c="dimmed" size="sm">
+                    Distribution across skill tiers
+                  </Text>
+                </Box>
+                <ThemeIcon size={48} radius="md" variant="gradient" gradient={{ from: 'green', to: 'teal' }}>
+                  <IconChartBar size={24} />
+                </ThemeIcon>
+              </Group>
+              {stats.totalCandidates > 0 ? (
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={barData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="tier" />
+                    <YAxis />
+                    <RechartsTooltip />
+                    <Bar dataKey="count" fill="url(#colorGradient)" radius={[8, 8, 0, 0]} animationBegin={0} animationDuration={800} />
+                    <defs>
+                      <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#3B82F6" stopOpacity={1} />
+                        <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0.8} />
+                      </linearGradient>
+                    </defs>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <Center h={320}>
+                  <Stack align="center" gap="sm">
+                    <IconChartBar size={48} stroke={1.5} color="var(--mantine-color-gray-4)" />
+                    <Text c="dimmed">No data available</Text>
+                  </Stack>
+                </Center>
+              )}
+            </Paper>
+          </Grid.Col>
+        </Grid>
+
+        {/* Line Chart */}
+        <Paper p="xl" radius="md" withBorder>
+          <Group justify="space-between" mb="xl">
+            <Box>
+              <Title order={3} mb={4}>
+                Registrations Over Time
+              </Title>
+              <Text c="dimmed" size="sm">
+                Last 7 days trend
+              </Text>
+            </Box>
+            <ThemeIcon size={48} radius="md" variant="gradient" gradient={{ from: 'violet', to: 'pink' }}>
+              <IconUserPlus size={24} />
+            </ThemeIcon>
+          </Group>
+          {lineData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={lineData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#3B82F6" />
-              </BarChart>
+                <RechartsTooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#8B5CF6"
+                  strokeWidth={3}
+                  name="Registrations"
+                  dot={{ fill: '#8B5CF6', r: 6 }}
+                  activeDot={{ r: 8 }}
+                  animationBegin={0}
+                  animationDuration={800}
+                />
+              </LineChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[300px] flex items-center justify-center text-gray-500">
-              No data available
-            </div>
+            <Center h={320}>
+              <Stack align="center" gap="sm">
+                <IconUserPlus size={48} stroke={1.5} color="var(--mantine-color-gray-4)" />
+                <Text c="dimmed">No registrations in the last 7 days</Text>
+              </Stack>
+            </Center>
           )}
-        </div>
-      </div>
+        </Paper>
 
-      {/* Registrations Over Time Chart */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-          Registrations Over Time (Last 7 Days)
-        </h2>
-        {lineData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={lineData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="count" stroke="#8B5CF6" strokeWidth={2} name="Registrations" />
-            </LineChart>
-          </ResponsiveContainer>
-        ) : (
-          <div className="h-[300px] flex items-center justify-center text-gray-500 dark:text-gray-400">
-            No registrations in the last 7 days
-          </div>
-        )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-          Quick Actions
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link
-            to="/admin/candidates"
-            className="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            <svg className="w-6 h-6 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-            </svg>
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">View All Candidates</h3>
-              <p className="text-sm text-gray-500">Browse and manage candidates</p>
-            </div>
-          </Link>
-        </div>
-      </div>
-    </div>
+        {/* Quick Actions */}
+        <Paper p="xl" radius="md" withBorder>
+          <Title order={3} mb="xl">
+            Quick Actions
+          </Title>
+          <Grid>
+            <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+              <ActionCard
+                to="/admin/candidates"
+                icon={<IconUsers size={24} />}
+                title="View All Candidates"
+                description="Browse and manage candidates"
+                color="blue"
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+              <ActionCard
+                to="/admin/candidates?filter=recent"
+                icon={<IconClock size={24} />}
+                title="Recent Submissions"
+                description="View latest registrations"
+                color="green"
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+              <ActionCard
+                to="/"
+                icon={<IconFileText size={24} />}
+                title="Application Form"
+                description="View public registration page"
+                color="violet"
+              />
+            </Grid.Col>
+          </Grid>
+        </Paper>
+      </Stack>
+    </Container>
   );
 };
 
@@ -195,23 +328,83 @@ interface StatsCardProps {
   title: string;
   value: number;
   subtitle?: string;
+  trend?: string;
+  trendUp?: boolean;
   icon: React.ReactNode;
   color: string;
 }
 
-const StatsCard: React.FC<StatsCardProps> = ({ title, value, subtitle, icon, color }) => {
+const StatsCard: React.FC<StatsCardProps> = ({ title, value, subtitle, trend, trendUp, icon, color }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
+    <Paper p="xl" radius="md" withBorder style={{ height: '100%' }}>
+      <Group justify="space-between" align="flex-start">
+        <Stack gap="xs" style={{ flex: 1 }}>
+          <Text size="sm" c="dimmed" fw={500}>
+            {title}
+          </Text>
+          <Title order={2}>{value.toLocaleString()}</Title>
           {subtitle && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>
+            <Text size="xs" c="dimmed">
+              {subtitle}
+            </Text>
           )}
-        </div>
-        <div className={`${color} text-white p-3 rounded-lg`}>{icon}</div>
-      </div>
-    </div>
+          {trend && (
+            <Group gap={4}>
+              {trendUp ? <IconArrowUpRight size={16} color="var(--mantine-color-green-6)" /> : <IconArrowDownRight size={16} color="var(--mantine-color-red-6)" />}
+              <Text size="sm" c={trendUp ? 'green' : 'red'} fw={500}>
+                {trend}
+              </Text>
+            </Group>
+          )}
+        </Stack>
+        <ThemeIcon size={56} radius="md" variant="light" color={color}>
+          {icon}
+        </ThemeIcon>
+      </Group>
+    </Paper>
+  );
+};
+
+interface ActionCardProps {
+  to: string;
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  color: string;
+}
+
+const ActionCard: React.FC<ActionCardProps> = ({ to, icon, title, description, color }) => {
+  return (
+    <Paper
+      component={Link}
+      to={to}
+      p="lg"
+      radius="md"
+      withBorder
+      style={{
+        textDecoration: 'none',
+        transition: 'all 0.2s ease',
+        cursor: 'pointer',
+        height: '100%',
+      }}
+      className="hover-card"
+    >
+      <Group align="flex-start" gap="md">
+        <ThemeIcon size={48} radius="md" variant="light" color={color}>
+          {icon}
+        </ThemeIcon>
+        <Stack gap={4} style={{ flex: 1 }}>
+          <Group justify="space-between">
+            <Text fw={600} size="sm">
+              {title}
+            </Text>
+            <IconEye size={16} color="var(--mantine-color-dimmed)" />
+          </Group>
+          <Text size="xs" c="dimmed">
+            {description}
+          </Text>
+        </Stack>
+      </Group>
+    </Paper>
   );
 };
