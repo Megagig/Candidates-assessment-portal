@@ -6,7 +6,7 @@ import { Notifications } from '@mantine/notifications';
 import { queryClient } from './lib/queryClient';
 import { useAuthStore } from './stores';
 import { theme } from './theme/mantine-theme';
-import { ProtectedRoute } from './components/auth';
+import { ProtectedRoute, SuperAdminRoute } from './components/auth';
 import { MantineAdminLayout } from './components/MantineAdminLayout';
 
 // Public pages
@@ -19,6 +19,7 @@ import {
   DashboardPage,
   CandidatesListPage,
   CandidateDetailPage,
+  PendingAdminsPage,
 } from './pages/admin';
 
 // Mantine styles
@@ -62,6 +63,14 @@ function App() {
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="candidates" element={<CandidatesListPage />} />
               <Route path="candidates/:id" element={<CandidateDetailPage />} />
+              <Route
+                path="pending-admins"
+                element={
+                  <SuperAdminRoute>
+                    <PendingAdminsPage />
+                  </SuperAdminRoute>
+                }
+              />
             </Route>
 
             {/* 404 */}

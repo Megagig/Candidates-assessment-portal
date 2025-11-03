@@ -4,3 +4,4 @@ export { AdminRegisterPage } from './AdminRegisterPage';
 export { DashboardPage } from './DashboardPage';
 export { CandidatesListPage } from './CandidatesListPage';
 export { CandidateDetailPage } from './CandidateDetailPage';
+export { PendingAdminsPage } from './PendingAdminsPage';

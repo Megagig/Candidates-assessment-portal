@@ -8,6 +8,7 @@ import rateLimit from 'express-rate-limit';
 import connectDB from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
 import candidateRoutes from './routes/candidate.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
 
 // Load environment variables
@@ -36,7 +37,7 @@ app.use(
 // Rate Limiting - Prevent brute force attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // Limit each IP to 1000 requests per windowMs (relaxed for development)
+  max: 20000, // Limit each IP to 1000 requests per windowMs (relaxed for development)
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
@@ -93,6 +94,9 @@ app.use('/api/auth', authLimiter, authRoutes);
 
 // Candidate routes
 app.use('/api/candidates', candidateRoutes);
+
+// Admin routes (super admin only)
+app.use('/api/admin', adminRoutes);
 
 /**
  * Error Handling Middleware

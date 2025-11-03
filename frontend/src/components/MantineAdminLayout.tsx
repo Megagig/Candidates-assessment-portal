@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   AppShell,
@@ -18,6 +17,7 @@ import {
   IconUsers,
   IconLogout,
   IconChevronDown,
+  IconUserCheck,
 } from '@tabler/icons-react';
 import { useAuthStore } from '../stores';
 import { useLogout } from '../hooks';
@@ -141,6 +141,19 @@ export const MantineAdminLayout = () => {
           >
             Candidates
           </Button>
+          {user?.role === 'super_admin' && (
+            <Button
+              component={Link}
+              to="/admin/pending-admins"
+              leftSection={<IconUserCheck size={18} />}
+              variant={isActive('/admin/pending-admins') ? 'filled' : 'subtle'}
+              fullWidth
+              justify="flex-start"
+              mb="xs"
+            >
+              Pending Admins
+            </Button>
+          )}
         </AppShell.Section>
 
         <AppShell.Section>
