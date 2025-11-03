@@ -33,7 +33,7 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
         <TierBadge tier={candidate.assignedTier} />
       </div>
 
-      {candidate.location && (
+      {candidate.country && (
         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-2">
           <svg
             className="w-4 h-4 mr-2"
@@ -54,7 +54,7 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          {candidate.location}
+          {candidate.country}
         </div>
       )}
 

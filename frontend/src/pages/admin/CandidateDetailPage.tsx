@@ -16,7 +16,6 @@ import {
   Modal,
   Divider,
   ThemeIcon,
-  Timeline,
   Alert,
 } from '@mantine/core';
 import {
