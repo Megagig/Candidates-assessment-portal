@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { IconLock, IconArrowLeft, IconShieldCheck } from '@tabler/icons-react';
 import { Navigation } from '../../components/landing';
-import { LoginForm } from '../../components/auth';
+import { MantineLoginForm } from '../../components/auth';
 import { useAuthStore } from '../../stores';
 
 export const LoginPage = () => {
@@ -120,7 +120,7 @@ export const LoginPage = () => {
                   </Text>
                 </Box>
 
-                <LoginForm />
+                <MantineLoginForm />
 
                 <Divider label="or" labelPosition="center" />
 

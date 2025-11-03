@@ -8,7 +8,8 @@
     "start": "node dist/server.js",
     "dev": "nodemon --watch src --ext ts,json --exec \"node --loader ts-node/esm src/server.ts\"",
     "build": "tsc",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "approve-admin": "node --loader ts-node/esm scripts/approve-admin.ts"
   },
   "author": "Anthony obi",
   "license": "MIT",

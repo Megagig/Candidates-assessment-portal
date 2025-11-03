@@ -79,11 +79,9 @@ export const register = async (
     };
 
     res.status(201).json({
-      status: 'success',
+      success: true,
       message: 'Registration submitted successfully. Your account is pending approval from a super admin.',
-      data: {
-        user: userResponse,
-      },
+      user: userResponse,
     });
   } catch (error) {
     next(error);
@@ -142,11 +140,9 @@ export const login = async (
     };
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       message: 'Login successful',
-      data: {
-        user: userResponse,
-      },
+      user: userResponse,
     });
   } catch (error) {
     next(error);
@@ -172,7 +168,7 @@ export const logout = async (
     });
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       message: 'Logout successful',
     });
   } catch (error) {
@@ -212,10 +208,8 @@ export const getMe = async (
     };
 
     res.status(200).json({
-      status: 'success',
-      data: {
-        user: userResponse,
-      },
+      success: true,
+      user: userResponse,
     });
   } catch (error) {
     next(error);
