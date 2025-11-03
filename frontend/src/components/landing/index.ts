@@ -2,7 +2,7 @@ export { Navigation } from './Navigation';
 export { HeroSection } from './HeroSection';
 export { HowItWorks } from './HowItWorks';
 export { TierShowcase } from './TierShowcase';
-export { FeaturesGrid } from './FeaturesGrid';
+export { Features } from './Features';
 export { DashboardPreview } from './DashboardPreview';
 export { Testimonials } from './Testimonials';
 export { FAQ } from './FAQ';

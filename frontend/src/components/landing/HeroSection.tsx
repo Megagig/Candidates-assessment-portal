@@ -1,86 +1,230 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Sparkles } from 'lucide-react';
-import { Button } from '../ui';
+import {
+  Container,
+  Title,
+  Text,
+  Button,
+  Group,
+  Badge,
+  SimpleGrid,
+  Paper,
+  Box,
+  Stack,
+  rem,
+} from '@mantine/core';
+import {
+  IconSparkles,
+  IconBolt,
+  IconShield,
+  IconTrendingUp,
+  IconArrowRight,
+} from '@tabler/icons-react';
 
-export const HeroSection: React.FC = () => {
+export const HeroSection = () => {
+  const stats = [
+    { value: '5', label: 'Skill Tiers', icon: IconTrendingUp, color: 'blue' },
+    { value: '10min', label: 'Assessment', icon: IconBolt, color: 'violet' },
+    { value: '100%', label: 'Automated', icon: IconShield, color: 'pink' },
+    { value: '24/7', label: 'Available', icon: IconSparkles, color: 'indigo' },
+  ];
+
   return (
-    <section className="relative bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-gray-900 overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      
-      {/* Animated gradient orbs */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-30 animate-blob"></div>
-      <div className="absolute top-40 right-10 w-72 h-72 bg-blue-300 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-300 dark:bg-pink-600 rounded-full mix-blend-multiply dark:mix-blend-overlay filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+    <Box
+      component="section"
+      style={{
+        minHeight: '90vh',
+        display: 'flex',
+        alignItems: 'center',
+        background: 'var(--mantine-color-body)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Animated Background Blobs */}
+      <Box
+        style={{
+          position: 'absolute',
+          top: rem(80),
+          left: rem(40),
+          width: rem(400),
+          height: rem(400),
+          background: 'radial-gradient(circle, rgba(103, 126, 234, 0.15) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          animation: 'float 8s ease-in-out infinite',
+        }}
+      />
+      <Box
+        style={{
+          position: 'absolute',
+          top: rem(160),
+          right: rem(40),
+          width: rem(400),
+          height: rem(400),
+          background: 'radial-gradient(circle, rgba(118, 75, 162, 0.15) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
+          animation: 'float 10s ease-in-out infinite reverse',
+        }}
+      />
 
-      <div className="relative container mx-auto px-4 py-16 sm:py-24 md:py-32">
-        <div className="max-w-4xl mx-auto text-center">
+      <Container size="lg" style={{ position: 'relative', zIndex: 1 }} py={80}>
+        <Stack align="center" gap="xl">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full border border-blue-200 dark:border-blue-800">
-            <Sparkles className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              AI-Powered Skill Assessment
-            </span>
-          </div>
+          <Badge
+            size="lg"
+            variant="gradient"
+            gradient={{ from: 'blue', to: 'violet', deg: 90 }}
+            leftSection={<IconSparkles size={16} />}
+            style={{ animation: 'fadeInDown 0.6s ease-out' }}
+          >
+            AI-Powered Skill Assessment Platform
+          </Badge>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+          <Title
+            order={1}
+            ta="center"
+            style={{
+              fontSize: 'clamp(2.5rem, 8vw, 5rem)',
+              fontWeight: 900,
+              lineHeight: 1.2,
+              animation: 'fadeInUp 0.8s ease-out',
+            }}
+          >
             Streamline Your{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <Text
+              component="span"
+              variant="gradient"
+              gradient={{ from: 'blue', to: 'violet', deg: 90 }}
+              inherit
+            >
               Developer Hiring
-            </span>{' '}
+            </Text>
+            <br />
             Process
-          </h1>
+          </Title>
 
           {/* Subheadline */}
-          <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto">
-            MegaHub automatically assesses and categorizes candidates into skill tiers,
-            saving you hours of manual evaluation
-          </p>
+          <Text
+            size="xl"
+            c="dimmed"
+            ta="center"
+            maw={800}
+            style={{
+              fontSize: 'clamp(1.125rem, 2vw, 1.5rem)',
+              lineHeight: 1.6,
+              animation: 'fadeInUp 1s ease-out',
+            }}
+          >
+            Automatically assess and categorize candidates into skill tiers with AI precision.
+            Save hours of manual evaluation and make data-driven hiring decisions.
+          </Text>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/register">
-              <Button size="lg" className="px-8 py-6 text-lg w-full sm:w-auto group">
-                Get Started
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <Link to="/admin/login">
-              <Button
-                variant="secondary"
-                size="lg"
-                className="px-8 py-6 text-lg w-full sm:w-auto"
-              >
-                Admin Login
-              </Button>
-            </Link>
-          </div>
+          <Group gap="md" style={{ animation: 'fadeInUp 1.2s ease-out' }}>
+            <Button
+              component={Link}
+              to="/register"
+              size="xl"
+              variant="gradient"
+              gradient={{ from: 'blue', to: 'violet', deg: 90 }}
+              rightSection={<IconArrowRight size={20} />}
+              style={{
+                boxShadow: '0 8px 24px rgba(103, 126, 234, 0.3)',
+              }}
+            >
+              Get Started Free
+            </Button>
+            <Button
+              component={Link}
+              to="/admin/login"
+              size="xl"
+              variant="default"
+            >
+              Admin Portal
+            </Button>
+          </Group>
 
           {/* Stats */}
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-            {[
-              { value: '5', label: 'Skill Tiers' },
-              { value: '10min', label: 'Assessment Time' },
-              { value: '100%', label: 'Automated' },
-              { value: '24/7', label: 'Available' },
-            ].map((stat, index) => (
-              <div
-                key={index}
-                className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700"
-              >
-                <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
+          <SimpleGrid
+            cols={{ base: 2, sm: 4 }}
+            spacing="lg"
+            mt="xl"
+            w="100%"
+            maw={1000}
+            style={{ animation: 'fadeIn 1.4s ease-out' }}
+          >
+            {stats.map((stat, index) => {
+              const Icon = stat.icon;
+              return (
+                <Paper
+                  key={index}
+                  p="xl"
+                  radius="lg"
+                  withBorder
+                  style={{
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
+                    ':hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: 'var(--mantine-shadow-lg)',
+                    },
+                  }}
+                >
+                  <Stack align="center" gap="sm">
+                    <Icon size={32} color={`var(--mantine-color-${stat.color}-6)`} />
+                    <Text
+                      size="2.5rem"
+                      fw={900}
+                      c={stat.color}
+                      style={{ lineHeight: 1 }}
+                    >
+                      {stat.value}
+                    </Text>
+                    <Text size="sm" c="dimmed" fw={600} ta="center">
+                      {stat.label}
+                    </Text>
+                  </Stack>
+                </Paper>
+              );
+            })}
+          </SimpleGrid>
+
+          {/* Trust Indicators */}
+          <Stack align="center" gap="sm" mt="xl">
+            <Text size="sm" c="dimmed">
+              Trusted by innovative companies worldwide
+            </Text>
+            <Group gap="xl">
+              {['Tech', 'Startup', 'Enterprise', 'Agency'].map((company, i) => (
+                <Text key={i} size="lg" fw={700} c="dimmed" opacity={0.5}>
+                  {company}
+                </Text>
+              ))}
+            </Group>
+          </Stack>
+        </Stack>
+      </Container>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(30px, -30px); }
+        }
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
+    </Box>
   );
 };

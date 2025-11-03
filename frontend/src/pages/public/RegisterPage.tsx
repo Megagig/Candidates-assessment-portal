@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button, Input, AssessmentForm } from '../../components';
+import {
+  Container,
+  Paper,
+  Title,
+  Text,
+  TextInput,
+  Button,
+  Stepper,
+  Group,
+  Box,
+  Stack,
+} from '@mantine/core';
+import { IconUser, IconMail, IconPhone, IconMapPin, IconArrowRight, IconArrowLeft } from '@tabler/icons-react';
+import { Navigation } from '../../components/landing';
+import { AssessmentForm } from '../../components';
 import { useRegisterCandidate } from '../../hooks';
 import { transformAssessmentAnswers } from '../../utils/assessmentTransform';
 
@@ -16,9 +30,9 @@ const personalInfoSchema = z.object({
 
 type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
 
-export const RegisterPage: React.FC = () => {
+export const RegisterPage = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  const [active, setActive] = useState(0);
   const [personalInfo, setPersonalInfo] = useState<PersonalInfoFormData | null>(null);
   const { mutate: registerCandidate, isPending } = useRegisterCandidate();
 
@@ -33,16 +47,14 @@ export const RegisterPage: React.FC = () => {
 
   const onPersonalInfoSubmit = (data: PersonalInfoFormData) => {
     setPersonalInfo(data);
-    setStep(2);
+    setActive(1);
   };
 
   const handleAssessmentSubmit = (answers: Record<string, string>) => {
     if (!personalInfo) return;
 
-    // Transform assessment answers to the expected format
     const assessmentResponses = transformAssessmentAnswers(answers);
 
-    // Submit registration
     registerCandidate(
       {
         ...personalInfo,
@@ -50,7 +62,6 @@ export const RegisterPage: React.FC = () => {
       },
       {
         onSuccess: () => {
-          // Navigate to success page
           navigate('/registration-success');
         },
       }
@@ -58,134 +69,120 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Candidate Registration
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300">
-              {step === 1 ? 'Tell us about yourself' : 'Complete the skill assessment'}
-            </p>
-          </div>
-
-          {/* Progress Indicator */}
-          <div className="mb-8">
-            <div className="flex items-center justify-center space-x-4">
-              <StepIndicator number={1} active={step === 1} completed={step > 1} label="Personal Info" />
-              <div className="flex-1 h-1 bg-gray-200 dark:bg-gray-700">
-                <div
-                  className={`h-full bg-blue-600 transition-all duration-300 ${
-                    step > 1 ? 'w-full' : 'w-0'
-                  }`}
-                ></div>
-              </div>
-              <StepIndicator number={2} active={step === 2} completed={false} label="Assessment" />
-            </div>
-          </div>
-
-          {/* Step 1: Personal Information */}
-          {step === 1 && (
-            <form onSubmit={handleSubmit(onPersonalInfoSubmit)} className="space-y-6">
-              <Input
-                {...register('name')}
-                id="name"
-                label="Full Name"
-                placeholder="John Doe"
-                error={errors.name?.message}
-                required
-              />
-
-              <Input
-                {...register('email')}
-                id="email"
-                type="email"
-                label="Email Address"
-                placeholder="john@example.com"
-                error={errors.email?.message}
-                required
-              />
-
-              <Input
-                {...register('phone')}
-                id="phone"
-                type="tel"
-                label="Phone Number"
-                placeholder="+1 (555) 123-4567"
-                error={errors.phone?.message}
-              />
-
-              <Input
-                {...register('location')}
-                id="location"
-                label="Location"
-                placeholder="City, Country"
-                error={errors.location?.message}
-              />
-
-              <div className="flex gap-4">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => navigate('/')}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" className="flex-1">
-                  Next: Assessment
-                </Button>
-              </div>
-            </form>
-          )}
-
-          {/* Step 2: Assessment */}
-          {step === 2 && (
-            <div>
-              <AssessmentForm onSubmit={handleAssessmentSubmit} isLoading={isPending} />
-              <div className="mt-6">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setStep(1)}
-                  className="w-full"
-                  disabled={isPending}
-                >
-                  ← Back to Personal Information
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-interface StepIndicatorProps {
-  number: number;
-  active: boolean;
-  completed: boolean;
-  label: string;
-}
-
-const StepIndicator: React.FC<StepIndicatorProps> = ({ number, active, completed, label }) => {
-  return (
-    <div className="flex flex-col items-center">
-      <div
-        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-          completed
-            ? 'bg-green-500 text-white'
-            : active
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
-        }`}
+    <Box style={{ minHeight: '100vh', background: 'var(--mantine-color-body)' }}>
+      <Navigation />
+      <Box
+        style={{
+          background: 'linear-gradient(135deg, var(--mantine-color-blue-0) 0%, var(--mantine-color-violet-0) 100%)',
+          padding: 'var(--mantine-spacing-xl) var(--mantine-spacing-md)',
+        }}
       >
-        {completed ? '✓' : number}
-      </div>
-      <span className="text-xs mt-1 text-gray-600 dark:text-gray-400">{label}</span>
-    </div>
+      <Container size="md" py="xl">
+        <Paper shadow="xl" radius="lg" p="xl" withBorder>
+          {/* Header */}
+          <Stack gap="md" mb="xl">
+            <Title order={1} ta="center">
+              Candidate Registration
+            </Title>
+            <Text size="lg" c="dimmed" ta="center">
+              {active === 0 ? 'Tell us about yourself' : 'Complete the skill assessment'}
+            </Text>
+          </Stack>
+
+          {/* Stepper */}
+          <Stepper active={active} onStepClick={setActive} mb="xl" allowNextStepsSelect={false}>
+            <Stepper.Step
+              label="Personal Info"
+              description="Your details"
+              icon={<IconUser size={18} />}
+            >
+              <form onSubmit={handleSubmit(onPersonalInfoSubmit)}>
+                <Stack gap="md" mt="xl">
+                  <TextInput
+                    {...register('name')}
+                    label="Full Name"
+                    placeholder="John Doe"
+                    leftSection={<IconUser size={16} />}
+                    error={errors.name?.message}
+                    required
+                    size="md"
+                  />
+
+                  <TextInput
+                    {...register('email')}
+                    label="Email Address"
+                    placeholder="john@example.com"
+                    leftSection={<IconMail size={16} />}
+                    error={errors.email?.message}
+                    required
+                    size="md"
+                    type="email"
+                  />
+
+                  <TextInput
+                    {...register('phone')}
+                    label="Phone Number"
+                    placeholder="+1 (555) 123-4567"
+                    leftSection={<IconPhone size={16} />}
+                    error={errors.phone?.message}
+                    size="md"
+                  />
+
+                  <TextInput
+                    {...register('location')}
+                    label="Location"
+                    placeholder="City, Country"
+                    leftSection={<IconMapPin size={16} />}
+                    error={errors.location?.message}
+                    size="md"
+                  />
+
+                  <Group justify="space-between" mt="xl">
+                    <Button
+                      variant="default"
+                      onClick={() => navigate('/')}
+                      size="md"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      rightSection={<IconArrowRight size={16} />}
+                      size="md"
+                      variant="gradient"
+                      gradient={{ from: 'blue', to: 'violet' }}
+                    >
+                      Next: Assessment
+                    </Button>
+                  </Group>
+                </Stack>
+              </form>
+            </Stepper.Step>
+
+            <Stepper.Step
+              label="Assessment"
+              description="Skill evaluation"
+              icon={<IconArrowRight size={18} />}
+            >
+              <Box mt="xl">
+                <AssessmentForm onSubmit={handleAssessmentSubmit} isLoading={isPending} />
+                <Group justify="center" mt="xl">
+                  <Button
+                    variant="default"
+                    onClick={() => setActive(0)}
+                    disabled={isPending}
+                    leftSection={<IconArrowLeft size={16} />}
+                    size="md"
+                  >
+                    Back to Personal Info
+                  </Button>
+                </Group>
+              </Box>
+            </Stepper.Step>
+          </Stepper>
+        </Paper>
+      </Container>
+    </Box>
+    </Box>
   );
 };

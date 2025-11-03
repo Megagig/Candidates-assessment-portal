@@ -24,14 +24,14 @@ export const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-24 bg-white dark:bg-gray-900">
-      <div className="container mx-auto px-4">
+    <section className="py-16 sm:py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="text-center mb-12 md:mb-20">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             How It Works
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Simple, fast, and accurate skill assessment in three easy steps
           </p>
         </div>
@@ -65,10 +65,10 @@ export const HowItWorks: React.FC = () => {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-3">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
                   {step.title}
                 </h3>
-                <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
+                <p className="text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
                   {step.description}
                 </p>
               </div>

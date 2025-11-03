@@ -27,43 +27,43 @@ export const Testimonials: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-24 bg-gray-50 dark:bg-gray-800">
-      <div className="container mx-auto px-4">
+    <section className="py-16 sm:py-20 md:py-28 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Trusted by Industry Leaders
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
             See what our clients say about transforming their hiring process
           </p>
         </div>
 
         {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-white dark:bg-gray-900 rounded-xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow"
+              className="bg-white dark:bg-gray-900 rounded-2xl p-8 md:p-10 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl hover:-translate-y-2 transition-all"
             >
               {/* Quote Icon */}
-              <Quote className="w-10 h-10 text-blue-600 dark:text-blue-400 mb-4" />
+              <Quote className="w-12 h-12 md:w-14 md:h-14 text-blue-600 dark:text-blue-400 mb-6" />
 
               {/* Quote */}
-              <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 italic">
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8 italic leading-relaxed">
                 "{testimonial.quote}"
               </p>
 
               {/* Author */}
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
                   {testimonial.avatar}
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-900 dark:text-white">
+                  <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
                     {testimonial.author}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <div className="text-base md:text-lg text-gray-600 dark:text-gray-400">
                     {testimonial.role}, {testimonial.company}
                   </div>
                 </div>

@@ -1,76 +1,171 @@
-import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Code2 } from 'lucide-react';
+import {
+  Burger,
+  Button,
+  Container,
+  Group,
+  Menu,
+  Text,
+  UnstyledButton,
+  useMantineColorScheme,
+  useComputedColorScheme,
+  rem,
+  Box,
+  Stack,
+} from '@mantine/core';
+import { useDisclosure, useWindowScroll } from '@mantine/hooks';
+import { IconCode, IconSun, IconMoon, IconDeviceDesktop } from '@tabler/icons-react';
 
-export const Navigation: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+export const Navigation = () => {
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const { setColorScheme } = useMantineColorScheme();
+  const computedColorScheme = useComputedColorScheme('light');
+  const [scroll] = useWindowScroll();
 
   const navLinks = [
-    { to: '/register', label: 'Candidate Registration' },
-    { to: '/admin/login', label: 'Admin Login' },
-    { to: '/admin/register', label: 'Admin Register' },
-    { to: '/contact', label: 'Contact Us' },
+    { to: '/register', label: 'Register' },
+    { to: '/admin/login', label: 'Admin' },
+    { to: '/contact', label: 'Contact' },
   ];
 
+  const themeIcons = {
+    light: <IconSun size={18} />,
+    dark: <IconMoon size={18} />,
+    auto: <IconDeviceDesktop size={18} />,
+  };
+
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <Box
+      component="nav"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        backdropFilter: 'blur(12px)',
+        backgroundColor: scroll.y > 10 
+          ? 'var(--mantine-color-body)' 
+          : 'transparent',
+        borderBottom: scroll.y > 10 
+          ? `${rem(1)} solid var(--mantine-color-default-border)` 
+          : 'none',
+        transition: 'all 0.3s ease',
+      }}
+    >
+      <Container size="xl" py="md">
+        <Group justify="space-between" h="100%">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Code2 className="w-8 h-8 text-blue-600" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <UnstyledButton
+            component={Link}
+            to="/"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: rem(8),
+              textDecoration: 'none',
+            }}
+          >
+            <IconCode 
+              size={32} 
+              style={{ 
+                color: 'var(--mantine-color-blue-6)',
+                transition: 'transform 0.3s ease',
+              }}
+            />
+            <Text
+              size="xl"
+              fw={800}
+              variant="gradient"
+              gradient={{ from: 'blue', to: 'violet', deg: 90 }}
+            >
               MegaHub
-            </span>
-          </Link>
+            </Text>
+          </UnstyledButton>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <Group gap="xs" visibleFrom="sm">
             {navLinks.map((link) => (
-              <Link
+              <Button
                 key={link.to}
+                component={Link}
                 to={link.to}
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                variant="subtle"
+                size="md"
+                fw={600}
               >
                 {link.label}
-              </Link>
+              </Button>
             ))}
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-            ) : (
-              <Menu className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-            )}
-          </button>
-        </div>
+            {/* Theme Toggle */}
+            <Menu shadow="md" width={150}>
+              <Menu.Target>
+                <Button variant="default" size="md">
+                  {themeIcons[computedColorScheme]}
+                </Button>
+              </Menu.Target>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col space-y-4">
+              <Menu.Dropdown>
+                <Menu.Item
+                  leftSection={<IconSun size={16} />}
+                  onClick={() => setColorScheme('light')}
+                >
+                  Light
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconMoon size={16} />}
+                  onClick={() => setColorScheme('dark')}
+                >
+                  Dark
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconDeviceDesktop size={16} />}
+                  onClick={() => setColorScheme('auto')}
+                >
+                  System
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
+
+          {/* Mobile Menu */}
+          <Group hiddenFrom="sm">
+            <Button
+              variant="default"
+              size="md"
+              onClick={() => {
+                const schemes: Array<'light' | 'dark' | 'auto'> = ['light', 'dark', 'auto'];
+                const currentIndex = schemes.indexOf(computedColorScheme);
+                const nextScheme = schemes[(currentIndex + 1) % schemes.length];
+                setColorScheme(nextScheme);
+              }}
+            >
+              {themeIcons[computedColorScheme]}
+            </Button>
+            <Burger opened={opened} onClick={toggle} size="sm" />
+          </Group>
+        </Group>
+
+        {/* Mobile Menu Dropdown */}
+        {opened && (
+          <Box mt="md" hiddenFrom="sm">
+            <Stack gap="xs">
               {navLinks.map((link) => (
-                <Link
+                <Button
                   key={link.to}
+                  component={Link}
                   to={link.to}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors px-2 py-1"
+                  variant="subtle"
+                  fullWidth
+                  onClick={close}
+                  fw={600}
                 >
                   {link.label}
-                </Link>
+                </Button>
               ))}
-            </div>
-          </div>
+            </Stack>
+          </Box>
         )}
-      </div>
-    </nav>
+      </Container>
+    </Box>
   );
 };

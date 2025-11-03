@@ -1,29 +1,16 @@
-import React from 'react';
-import {
-  Navigation,
-  HeroSection,
-  HowItWorks,
-  TierShowcase,
-  FeaturesGrid,
-  DashboardPreview,
-  Testimonials,
-  FAQ,
-  CTASection,
-  Footer,
-} from '../../components/landing';
+import { Navigation } from '../../components/landing/Navigation';
+import { HeroSection } from '../../components/landing/HeroSection';
+import { TierShowcase } from '../../components/landing/TierShowcase';
+import { Features } from '../../components/landing/Features';
+import { Footer } from '../../components/landing/Footer';
 
-export const HomePage: React.FC = () => {
+export const HomePage = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div style={{ minHeight: '100vh' }}>
       <Navigation />
       <HeroSection />
-      <HowItWorks />
       <TierShowcase />
-      <FeaturesGrid />
-      <DashboardPreview />
-      <Testimonials />
-      <FAQ />
-      <CTASection />
+      <Features />
       <Footer />
     </div>
   );

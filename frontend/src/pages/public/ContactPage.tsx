@@ -1,9 +1,31 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Send, MessageCircle, Mail, Phone, MapPin } from 'lucide-react';
-import { Button, Input } from '../../components/ui';
+import { useState } from 'react';
+import {
+  Container,
+  Paper,
+  Title,
+  Text,
+  TextInput,
+  Textarea,
+  Button,
+  Group,
+  Stack,
+  Box,
+  SimpleGrid,
+  ThemeIcon,
+  Alert,
+  Anchor,
+} from '@mantine/core';
+import {
+  IconSend,
+  IconBrandWhatsapp,
+  IconMail,
+  IconPhone,
+  IconMapPin,
+  IconCheck,
+} from '@tabler/icons-react';
+import { Navigation } from '../../components/landing';
 
-export const ContactPage: React.FC = () => {
+export const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,67 +43,86 @@ export const ContactPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual form submission
     setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000);
+    setTimeout(() => {
+      setIsSubmitted(false);
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    }, 3000);
   };
 
   const whatsappNumber = '+2348060374755';
-  const whatsappMessage = encodeURIComponent('Hi! I\'d like to get in touch about MegaHub.');
+  const whatsappMessage = encodeURIComponent("Hi! I'd like to get in touch about MegaHub.");
+
+  const contactInfo = [
+    {
+      icon: IconMail,
+      title: 'Email',
+      value: 'support@megahub.com',
+      href: 'mailto:support@megahub.com',
+      color: 'blue',
+    },
+    {
+      icon: IconPhone,
+      title: 'Phone',
+      value: '+234 806 037 4755',
+      href: 'tel:+2348060374755',
+      color: 'green',
+    },
+    {
+      icon: IconMapPin,
+      title: 'Location',
+      value: 'Lagos, Nigeria',
+      href: null,
+      color: 'violet',
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Navigation Back */}
-      <nav className="bg-white dark:bg-gray-800 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back to Home</span>
-          </Link>
-        </div>
-      </nav>
+    <Box style={{ minHeight: '100vh', background: 'var(--mantine-color-body)' }}>
+      <Navigation />
+      <Container size="lg" py="xl">
+        {/* Header */}
+        <Stack align="center" gap="md" mb={60}>
+          <Title order={1} ta="center" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
+            Get in Touch
+          </Title>
+          <Text size="xl" c="dimmed" ta="center">
+            Have questions? We'd love to hear from you.
+          </Text>
+        </Stack>
 
-      <div className="container mx-auto px-4 py-12 sm:py-16">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Get in Touch
-            </h1>
-            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400">
-              Have questions? We'd love to hear from you.
-            </p>
-          </div>
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl">
+          {/* Contact Form */}
+          <Paper shadow="md" radius="lg" p="xl" withBorder>
+            <Title order={2} size="h3" mb="lg">
+              Send us a Message
+            </Title>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Contact Form */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
-                Send us a Message
-              </h2>
+            {isSubmitted && (
+              <Alert
+                icon={<IconCheck size={16} />}
+                title="Success!"
+                color="green"
+                mb="lg"
+                variant="light"
+              >
+                Thank you! Your message has been sent successfully.
+              </Alert>
+            )}
 
-              {isSubmitted && (
-                <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-500 rounded-lg">
-                  <p className="text-green-700 dark:text-green-300">
-                    Thank you! Your message has been sent successfully.
-                  </p>
-                </div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <Input
+            <form onSubmit={handleSubmit}>
+              <Stack gap="md">
+                <TextInput
                   name="name"
                   label="Name"
                   placeholder="Your full name"
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  size="md"
                 />
 
-                <Input
+                <TextInput
                   name="email"
                   type="email"
                   label="Email"
@@ -89,132 +130,133 @@ export const ContactPage: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  size="md"
                 />
 
-                <Input
+                <TextInput
                   name="subject"
                   label="Subject"
                   placeholder="What is this about?"
                   value={formData.subject}
                   onChange={handleChange}
                   required
+                  size="md"
                 />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    name="message"
-                    rows={5}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="Tell us more..."
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+                <Textarea
+                  name="message"
+                  label="Message"
+                  placeholder="Tell us more..."
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  minRows={5}
+                  size="md"
+                />
 
-                <Button type="submit" size="lg" className="w-full">
-                  <Send className="w-5 h-5 mr-2" />
+                <Button
+                  type="submit"
+                  size="lg"
+                  leftSection={<IconSend size={18} />}
+                  variant="gradient"
+                  gradient={{ from: 'blue', to: 'violet' }}
+                  fullWidth
+                >
                   Send Message
                 </Button>
-              </form>
-            </div>
+              </Stack>
+            </form>
+          </Paper>
 
-            {/* Contact Information */}
-            <div className="space-y-6">
-              {/* Quick Contact */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
-                  Contact Information
-                </h2>
+          {/* Contact Information */}
+          <Stack gap="lg">
+            {/* Contact Details */}
+            <Paper shadow="md" radius="lg" p="xl" withBorder>
+              <Title order={2} size="h3" mb="lg">
+                Contact Information
+              </Title>
 
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
-                      <a
-                        href="mailto:support@megahub.com"
-                        className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                      >
-                        support@megahub.com
-                      </a>
-                    </div>
-                  </div>
+              <Stack gap="lg">
+                {contactInfo.map((info, index) => {
+                  const Icon = info.icon;
+                  return (
+                    <Group key={index} gap="md">
+                      <ThemeIcon size={48} radius="md" variant="light" color={info.color}>
+                        <Icon size={24} />
+                      </ThemeIcon>
+                      <Box>
+                        <Text fw={600} size="sm" mb={4}>
+                          {info.title}
+                        </Text>
+                        {info.href ? (
+                          <Anchor href={info.href} c="dimmed" size="sm">
+                            {info.value}
+                          </Anchor>
+                        ) : (
+                          <Text c="dimmed" size="sm">
+                            {info.value}
+                          </Text>
+                        )}
+                      </Box>
+                    </Group>
+                  );
+                })}
+              </Stack>
+            </Paper>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-6 h-6 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Phone</h3>
-                      <a
-                        href="tel:+2348060374755"
-                        className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                      >
-                        +234 806 037 4755
-                      </a>
-                    </div>
-                  </div>
+            {/* WhatsApp CTA */}
+            <Paper
+              shadow="md"
+              radius="lg"
+              p="xl"
+              style={{
+                background: 'linear-gradient(135deg, var(--mantine-color-green-6) 0%, var(--mantine-color-teal-6) 100%)',
+                color: 'white',
+              }}
+            >
+              <IconBrandWhatsapp size={48} style={{ marginBottom: 16 }} />
+              <Title order={3} size="h4" mb="sm" c="white">
+                Prefer WhatsApp?
+              </Title>
+              <Text mb="lg" opacity={0.9}>
+                Get instant responses to your questions via WhatsApp
+              </Text>
+              <Button
+                component="a"
+                href={`https://wa.me/${whatsappNumber.replace(/\+/g, '')}?text=${whatsappMessage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                leftSection={<IconBrandWhatsapp size={18} />}
+                size="md"
+                variant="white"
+                color="green"
+                fullWidth
+              >
+                Chat on WhatsApp
+              </Button>
+            </Paper>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Location</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Lagos, Nigeria</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* WhatsApp CTA */}
-              <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 sm:p-8 text-white">
-                <MessageCircle className="w-12 h-12 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Prefer WhatsApp?</h3>
-                <p className="mb-4 text-green-50">
-                  Get instant responses to your questions via WhatsApp
-                </p>
-                <a
-                  href={`https://wa.me/${whatsappNumber.replace(/\+/g, '')}?text=${whatsappMessage}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-green-600 rounded-lg font-medium hover:bg-green-50 transition-colors"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Chat on WhatsApp
-                </a>
-              </div>
-
-              {/* Office Hours */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  Office Hours
-                </h3>
-                <div className="space-y-2 text-gray-600 dark:text-gray-400">
-                  <p className="flex justify-between">
-                    <span className="font-medium">Monday - Friday:</span>
-                    <span>9:00 AM - 6:00 PM</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="font-medium">Saturday:</span>
-                    <span>10:00 AM - 4:00 PM</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="font-medium">Sunday:</span>
-                    <span>Closed</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            {/* Office Hours */}
+            <Paper shadow="md" radius="lg" p="xl" withBorder>
+              <Title order={3} size="h4" mb="lg">
+                Office Hours
+              </Title>
+              <Stack gap="sm">
+                {[
+                  { day: 'Monday - Friday', hours: '9:00 AM - 6:00 PM' },
+                  { day: 'Saturday', hours: '10:00 AM - 4:00 PM' },
+                  { day: 'Sunday', hours: 'Closed' },
+                ].map((schedule, index) => (
+                  <Group key={index} justify="space-between">
+                    <Text fw={500}>{schedule.day}</Text>
+                    <Text c="dimmed">{schedule.hours}</Text>
+                  </Group>
+                ))}
+              </Stack>
+            </Paper>
+          </Stack>
+        </SimpleGrid>
+      </Container>
+    </Box>
   );
 };

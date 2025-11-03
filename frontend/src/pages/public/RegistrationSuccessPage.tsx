@@ -1,48 +1,95 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../../components/ui';
+import {
+  Container,
+  Paper,
+  Title,
+  Text,
+  Button,
+  Stack,
+  Box,
+  ThemeIcon,
+  Group,
+} from '@mantine/core';
+import { IconCheck, IconHome, IconMail } from '@tabler/icons-react';
+import { Navigation } from '../../components/landing';
 
-export const RegistrationSuccessPage: React.FC = () => {
+export const RegistrationSuccessPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 text-center">
-        {/* Success Icon */}
-        <div className="mb-6">
-          <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-            <svg
-              className="w-10 h-10 text-green-600 dark:text-green-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+    <Box style={{ minHeight: '100vh', background: 'var(--mantine-color-body)' }}>
+      <Navigation />
+      <Box
+        style={{
+          minHeight: 'calc(100vh - 80px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, var(--mantine-color-blue-0) 0%, var(--mantine-color-violet-0) 100%)',
+          padding: 'var(--mantine-spacing-md)',
+        }}
+      >
+      <Container size="sm">
+        <Paper shadow="xl" radius="lg" p="xl" withBorder>
+          <Stack align="center" gap="xl">
+            {/* Success Icon */}
+            <ThemeIcon
+              size={80}
+              radius="xl"
+              variant="gradient"
+              gradient={{ from: 'green', to: 'teal', deg: 90 }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-        </div>
+              <IconCheck size={48} stroke={3} />
+            </ThemeIcon>
 
-        {/* Message */}
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          Registration Successful!
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
-          Thank you for completing the assessment. We've analyzed your responses and assigned you to a skill tier.
-        </p>
-        <p className="text-gray-600 dark:text-gray-300 mb-8">
-          Check your email for your tier assignment and next steps. We'll be in touch soon!
-        </p>
+            {/* Message */}
+            <Stack align="center" gap="md">
+              <Title order={1} ta="center">
+                Registration Successful!
+              </Title>
+              <Text size="lg" c="dimmed" ta="center">
+                Thank you for completing the assessment. We've analyzed your responses and assigned you to a skill tier.
+              </Text>
+              <Paper p="md" radius="md" withBorder w="100%" style={{ background: 'var(--mantine-color-blue-0)' }}>
+                <Group gap="sm">
+                  <IconMail size={20} color="var(--mantine-color-blue-6)" />
+                  <Text size="sm" c="dimmed">
+                    Check your email for your tier assignment and next steps. We'll be in touch soon!
+                  </Text>
+                </Group>
+              </Paper>
+            </Stack>
 
-        {/* Action */}
-        <Link to="/">
-          <Button size="lg" className="w-full">
-            Back to Home
-          </Button>
-        </Link>
-      </div>
-    </div>
+            {/* Actions */}
+            <Stack gap="sm" w="100%">
+              <Button
+                component={Link}
+                to="/"
+                size="lg"
+                leftSection={<IconHome size={18} />}
+                variant="gradient"
+                gradient={{ from: 'blue', to: 'violet' }}
+                fullWidth
+              >
+                Back to Home
+              </Button>
+              <Button
+                component={Link}
+                to="/contact"
+                size="md"
+                variant="default"
+                fullWidth
+              >
+                Contact Support
+              </Button>
+            </Stack>
+
+            {/* Additional Info */}
+            <Text size="sm" c="dimmed" ta="center">
+              Questions? Feel free to reach out to our support team.
+            </Text>
+          </Stack>
+        </Paper>
+      </Container>
+    </Box>
+    </Box>
   );
 };

@@ -38,41 +38,41 @@ export const FAQ: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-24 bg-white dark:bg-gray-900">
-      <div className="container mx-auto px-4">
+    <section className="py-16 sm:py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Frequently Asked Questions
           </h2>
-          <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Got questions? We've got answers
           </p>
         </div>
 
         {/* FAQ Accordion */}
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="max-w-4xl mx-auto space-y-4 md:space-y-6">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+              className="border-2 border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden hover:border-blue-500 dark:hover:border-blue-500 transition-all"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full px-6 py-5 flex items-center justify-between bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-750 transition-colors text-left"
+                className="w-full px-6 md:px-8 py-6 flex items-center justify-between bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left"
               >
-                <span className="text-lg font-semibold text-gray-900 dark:text-white pr-4">
+                <span className="text-lg md:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white pr-4">
                   {faq.question}
                 </span>
                 <ChevronDown
-                  className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform ${
+                  className={`w-6 h-6 md:w-7 md:h-7 text-gray-500 dark:text-gray-400 flex-shrink-0 transition-transform ${
                     openIndex === index ? 'rotate-180' : ''
                   }`}
                 />
               </button>
               {openIndex === index && (
-                <div className="px-6 py-5 bg-white dark:bg-gray-900">
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                <div className="px-6 md:px-8 py-6 bg-white dark:bg-gray-900 border-t-2 border-gray-200 dark:border-gray-700">
+                  <p className="text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>
