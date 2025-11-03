@@ -24,8 +24,8 @@ import { transformAssessmentAnswers } from '../../utils/assessmentTransform';
 const personalInfoSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
-  phone: z.string().optional(),
-  location: z.string().optional(),
+  phone: z.string().min(1, 'Phone number is required'),
+  country: z.string().optional(),
 });
 
 type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
@@ -77,112 +77,113 @@ export const RegisterPage = () => {
           padding: 'var(--mantine-spacing-xl) var(--mantine-spacing-md)',
         }}
       >
-      <Container size="md" py="xl">
-        <Paper shadow="xl" radius="lg" p="xl" withBorder>
-          {/* Header */}
-          <Stack gap="md" mb="xl">
-            <Title order={1} ta="center">
-              Candidate Registration
-            </Title>
-            <Text size="lg" c="dimmed" ta="center">
-              {active === 0 ? 'Tell us about yourself' : 'Complete the skill assessment'}
-            </Text>
-          </Stack>
+        <Container size="md" py="xl">
+          <Paper shadow="xl" radius="lg" p="xl" withBorder>
+            {/* Header */}
+            <Stack gap="md" mb="xl">
+              <Title order={1} ta="center">
+                Candidate Registration
+              </Title>
+              <Text size="lg" c="dimmed" ta="center">
+                {active === 0 ? 'Tell us about yourself' : 'Complete the skill assessment'}
+              </Text>
+            </Stack>
 
-          {/* Stepper */}
-          <Stepper active={active} onStepClick={setActive} mb="xl" allowNextStepsSelect={false}>
-            <Stepper.Step
-              label="Personal Info"
-              description="Your details"
-              icon={<IconUser size={18} />}
-            >
-              <form onSubmit={handleSubmit(onPersonalInfoSubmit)}>
-                <Stack gap="md" mt="xl">
-                  <TextInput
-                    {...register('name')}
-                    label="Full Name"
-                    placeholder="John Doe"
-                    leftSection={<IconUser size={16} />}
-                    error={errors.name?.message}
-                    required
-                    size="md"
-                  />
+            {/* Stepper */}
+            <Stepper active={active} onStepClick={setActive} mb="xl" allowNextStepsSelect={false}>
+              <Stepper.Step
+                label="Personal Info"
+                description="Your details"
+                icon={<IconUser size={18} />}
+              >
+                <form onSubmit={handleSubmit(onPersonalInfoSubmit)}>
+                  <Stack gap="md" mt="xl">
+                    <TextInput
+                      {...register('name')}
+                      label="Full Name"
+                      placeholder="John Doe"
+                      leftSection={<IconUser size={16} />}
+                      error={errors.name?.message}
+                      required
+                      size="md"
+                    />
 
-                  <TextInput
-                    {...register('email')}
-                    label="Email Address"
-                    placeholder="john@example.com"
-                    leftSection={<IconMail size={16} />}
-                    error={errors.email?.message}
-                    required
-                    size="md"
-                    type="email"
-                  />
+                    <TextInput
+                      {...register('email')}
+                      label="Email Address"
+                      placeholder="john@example.com"
+                      leftSection={<IconMail size={16} />}
+                      error={errors.email?.message}
+                      required
+                      size="md"
+                      type="email"
+                    />
 
-                  <TextInput
-                    {...register('phone')}
-                    label="Phone Number"
-                    placeholder="+1 (555) 123-4567"
-                    leftSection={<IconPhone size={16} />}
-                    error={errors.phone?.message}
-                    size="md"
-                  />
+                    <TextInput
+                      {...register('phone')}
+                      label="Phone Number"
+                      placeholder="+1 (555) 123-4567"
+                      leftSection={<IconPhone size={16} />}
+                      error={errors.phone?.message}
+                      required
+                      size="md"
+                    />
 
-                  <TextInput
-                    {...register('location')}
-                    label="Location"
-                    placeholder="City, Country"
-                    leftSection={<IconMapPin size={16} />}
-                    error={errors.location?.message}
-                    size="md"
-                  />
+                    <TextInput
+                      {...register('country')}
+                      label="Country"
+                      placeholder="United States"
+                      leftSection={<IconMapPin size={16} />}
+                      error={errors.country?.message}
+                      size="md"
+                    />
 
-                  <Group justify="space-between" mt="xl">
+                    <Group justify="space-between" mt="xl">
+                      <Button
+                        variant="default"
+                        onClick={() => navigate('/')}
+                        size="md"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        rightSection={<IconArrowRight size={16} />}
+                        size="md"
+                        variant="gradient"
+                        gradient={{ from: 'blue', to: 'violet' }}
+                      >
+                        Next: Assessment
+                      </Button>
+                    </Group>
+                  </Stack>
+                </form>
+              </Stepper.Step>
+
+              <Stepper.Step
+                label="Assessment"
+                description="Skill evaluation"
+                icon={<IconArrowRight size={18} />}
+              >
+                <Box mt="xl">
+                  <AssessmentForm onSubmit={handleAssessmentSubmit} isLoading={isPending} />
+                  <Group justify="center" mt="xl">
                     <Button
                       variant="default"
-                      onClick={() => navigate('/')}
+                      onClick={() => setActive(0)}
+                      disabled={isPending}
+                      leftSection={<IconArrowLeft size={16} />}
                       size="md"
                     >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      rightSection={<IconArrowRight size={16} />}
-                      size="md"
-                      variant="gradient"
-                      gradient={{ from: 'blue', to: 'violet' }}
-                    >
-                      Next: Assessment
+                      Back to Personal Info
                     </Button>
                   </Group>
-                </Stack>
-              </form>
-            </Stepper.Step>
-
-            <Stepper.Step
-              label="Assessment"
-              description="Skill evaluation"
-              icon={<IconArrowRight size={18} />}
-            >
-              <Box mt="xl">
-                <AssessmentForm onSubmit={handleAssessmentSubmit} isLoading={isPending} />
-                <Group justify="center" mt="xl">
-                  <Button
-                    variant="default"
-                    onClick={() => setActive(0)}
-                    disabled={isPending}
-                    leftSection={<IconArrowLeft size={16} />}
-                    size="md"
-                  >
-                    Back to Personal Info
-                  </Button>
-                </Group>
-              </Box>
-            </Stepper.Step>
-          </Stepper>
-        </Paper>
-      </Container>
-    </Box>
+                </Box>
+              </Stepper.Step>
+            </Stepper>
+          </Paper>
+        </Container>
+      </Box>
     </Box>
   );
 };

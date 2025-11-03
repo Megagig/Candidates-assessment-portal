@@ -1,6 +1,21 @@
 import { ExperienceLevel, SkillTier, type IAssessmentResponse } from '../types/index.js';
 
 /**
+ * Helper function to compare experience levels
+ * Returns true if actual level is >= required level
+ */
+const meetsExperienceLevel = (actual: ExperienceLevel, required: ExperienceLevel): boolean => {
+  const levels = {
+    [ExperienceLevel.NONE]: 0,
+    [ExperienceLevel.BASIC]: 1,
+    [ExperienceLevel.INTERMEDIATE]: 2,
+    [ExperienceLevel.ADVANCED]: 3,
+  };
+  
+  return levels[actual] >= levels[required];
+};
+
+/**
  * Calculate the appropriate skill tier based on assessment responses
  * 
  * Tier 0: Beginner - HTML/CSS/JS basics, no CRUD capability
@@ -8,11 +23,9 @@ import { ExperienceLevel, SkillTier, type IAssessmentResponse } from '../types/i
  * Tier 2: Full-Stack Next.js Developer - Next.js CRUD + auth, no backend framework
  * Tier 3: Multi-Framework Developer - Next.js + Express/Hono + auth, no Golang
  * Tier 4: Advanced Full-Stack Developer - Next.js + Express + Golang
- * Tier 5: Expert Full-Stack Developer - Advanced in all areas
  */
 export const calculateTier = (responses: IAssessmentResponse): SkillTier => {
   const {
-    htmlCssJsKnowledge,
     reactNextJsKnowledge,
     canBuildCrudApp,
     canImplementAuth,
@@ -26,83 +39,77 @@ export const calculateTier = (responses: IAssessmentResponse): SkillTier => {
     canDeployApps,
   } = responses;
 
-  // Tier 5: Expert Full-Stack Developer
-  // Advanced proficiency in all areas
-  if (
-    reactNextJsKnowledge === ExperienceLevel.ADVANCED &&
-    expressHonoKnowledge === ExperienceLevel.ADVANCED &&
-    golangKnowledge >= ExperienceLevel.INTERMEDIATE &&
-    canBuildGoApi &&
-    canBuildAuthenticatedApi &&
-    canDeployApps &&
-    canImplementAuth &&
-    canImplementGoogleAuth
-  ) {
-    return SkillTier.TIER_5;
-  }
-
   // Tier 4: Advanced Full-Stack Developer
-  // Knows Next.js/React, Express/Hono, and Golang
-  // Can build simple API with Go and integrate with frontend
+  // Proficient in Next.js, Express, Laravel and Hono
+  // Knows Golang and can build simple APIs with Go
   if (
-    (reactNextJsKnowledge >= ExperienceLevel.INTERMEDIATE || 
-     laravelKnowledge >= ExperienceLevel.INTERMEDIATE) &&
-    expressHonoKnowledge >= ExperienceLevel.INTERMEDIATE &&
-    golangKnowledge >= ExperienceLevel.BASIC &&
+    (meetsExperienceLevel(reactNextJsKnowledge, ExperienceLevel.INTERMEDIATE) || 
+     meetsExperienceLevel(laravelKnowledge, ExperienceLevel.INTERMEDIATE)) &&
+    (meetsExperienceLevel(expressHonoKnowledge, ExperienceLevel.BASIC) || 
+     meetsExperienceLevel(laravelKnowledge, ExperienceLevel.BASIC)) &&
+    meetsExperienceLevel(golangKnowledge, ExperienceLevel.BASIC) &&
     canBuildGoApi
   ) {
     return SkillTier.TIER_4;
   }
 
   // Tier 3: Multi-Framework Developer
-  // Knows Next.js/React and can build authenticated CRUD app
-  // Knows Express/Hono and can build authenticated CRUD API with documentation
-  // Does not know Golang OR Laravel with auth capabilities
+  // Can build authenticated CRUD apps with Next.js
+  // Can build authenticated CRUD APIs with Express/Hono (with documentation)
+  // OR can build authenticated CRUD apps with Laravel
+  // Does not know Golang
   if (
-    ((reactNextJsKnowledge >= ExperienceLevel.INTERMEDIATE &&
-      canBuildCrudApp &&
-      canImplementAuth &&
-      expressHonoKnowledge >= ExperienceLevel.INTERMEDIATE &&
-      canBuildAuthenticatedApi) ||
-     (laravelKnowledge >= ExperienceLevel.INTERMEDIATE &&
-      canBuildCrudApp &&
-      canImplementAuth)) &&
-    golangKnowledge === ExperienceLevel.NONE
+    golangKnowledge === ExperienceLevel.NONE &&
+    (
+      // Option 1: Next.js + Express/Hono
+      (meetsExperienceLevel(reactNextJsKnowledge, ExperienceLevel.INTERMEDIATE) &&
+       canBuildCrudApp &&
+       canImplementAuth &&
+       meetsExperienceLevel(expressHonoKnowledge, ExperienceLevel.BASIC) &&
+       canBuildAuthenticatedApi) ||
+      // Option 2: Laravel
+      (meetsExperienceLevel(laravelKnowledge, ExperienceLevel.INTERMEDIATE) &&
+       canBuildCrudApp &&
+       canImplementAuth)
+    )
   ) {
     return SkillTier.TIER_3;
   }
 
   // Tier 2: Full-Stack Next.js Developer
-  // Can build authenticated CRUD app with Next.js (password + Google)
+  // Can build an authenticated CRUD app with Next.js
   // Can deploy applications
-  // Does not have knowledge of Express/Hono or other backend frameworks
+  // Knows basics of Express/Hono OR has no knowledge of backend frameworks
   if (
-    reactNextJsKnowledge >= ExperienceLevel.INTERMEDIATE &&
+    meetsExperienceLevel(reactNextJsKnowledge, ExperienceLevel.INTERMEDIATE) &&
     canBuildCrudApp &&
     canImplementAuth &&
-    (canImplementGoogleAuth || canDeployApps) &&
-    expressHonoKnowledge === ExperienceLevel.NONE &&
+    canImplementGoogleAuth &&
+    canDeployApps &&
+    (expressHonoKnowledge === ExperienceLevel.BASIC || 
+     expressHonoKnowledge === ExperienceLevel.NONE) &&
     laravelKnowledge === ExperienceLevel.NONE
   ) {
     return SkillTier.TIER_2;
   }
 
   // Tier 1: CRUD Developer
-  // Can build CRUD application with database
-  // Cannot implement authentication
+  // Can build a CRUD app with Next.js using server actions or API routes
+  // Can work with databases
+  // Cannot implement authentication (password or Google OAuth)
   if (
-    (reactNextJsKnowledge >= ExperienceLevel.BASIC ||
-     reactNextJsKnowledge === ExperienceLevel.INTERMEDIATE) &&
+    meetsExperienceLevel(reactNextJsKnowledge, ExperienceLevel.BASIC) &&
     canBuildCrudApp &&
-    databaseKnowledge >= ExperienceLevel.BASIC &&
+    meetsExperienceLevel(databaseKnowledge, ExperienceLevel.BASIC) &&
     !canImplementAuth
   ) {
     return SkillTier.TIER_1;
   }
 
   // Tier 0: Beginner
-  // Has basic knowledge but cannot build CRUD app
-  // Default fallback for beginners
+  // Has done HTML, CSS, and basic JavaScript
+  // Knows the basics of Next.js or React
+  // Cannot build a CRUD app with a database yet
   return SkillTier.TIER_0;
 };
 
@@ -130,15 +137,15 @@ export const getTierDescription = (tier: SkillTier): string => {
     [SkillTier.TIER_0]:
       'A complete beginner. Has done HTML, CSS, and basic JavaScript. Knows the basics of Next.js or React but is not capable of building a CRUD app with a database.',
     [SkillTier.TIER_1]:
-      'I know some Next.js/React. I can build a CRUD application with a database using server actions or API routes, but I cannot add advanced authentication (e.g., password and Google Sign-In).',
+      'Can build a CRUD application with a database using Next.js server actions or API routes, but cannot add advanced authentication (e.g., password and Google Sign-In).',
     [SkillTier.TIER_2]:
-      "I know Next.js/React. I can build an authenticated (password + Google) CRUD App, deploy it, but I don't have knowledge of Express/Hono or other backend frameworks to build an authenticated CRUD API.",
+      'Can build an authenticated (password + Google) CRUD App with Next.js, deploy it, but has no knowledge of Express/Hono or other backend frameworks to build authenticated CRUD APIs.',
     [SkillTier.TIER_3]:
-      'I know Next.js/React, and can build an authenticated CRUD app. I know Express/Hono and can build an authenticated CRUD API with API documentation, but I do not know Golang.',
+      'Can build authenticated CRUD apps with Next.js and authenticated CRUD APIs with Express/Hono (with documentation), OR can build authenticated CRUD apps with Laravel. Does not know Golang.',
     [SkillTier.TIER_4]:
-      'I know Next.js/React, Express/Hono, and I know Golang. I can build a simple API with Go and integrate it with a frontend.',
+      'Proficient in Next.js, Express, Laravel and Hono. Knows Golang and can build simple APIs with Go and integrate them with a frontend.',
     [SkillTier.TIER_5]:
-      'Advanced proficiency in all areas with expert-level skills in multiple frameworks and languages. Demonstrated excellence in Next.js, Express, Golang, and full-stack development.',
+      'Reserved for exceptional candidates with advanced proficiency in all areas.',
   };
 
   return tierDescriptions[tier];

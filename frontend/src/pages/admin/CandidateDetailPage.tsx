@@ -137,7 +137,7 @@ export const CandidateDetailPage: React.FC = () => {
                   <InfoField label="Phone" value={candidate.phone || 'Not provided'} icon={<IconPhone size={16} />} />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <InfoField label="Location" value={candidate.location || 'Not provided'} icon={<IconMapPin size={16} />} />
+                  <InfoField label="Location" value={candidate.country || 'Not provided'} icon={<IconMapPin size={16} />} />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, sm: 6 }}>
                   <InfoField
