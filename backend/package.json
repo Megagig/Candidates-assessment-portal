@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "nodemon --watch src --ext ts,json --exec \"node --loader ts-node/esm src/server.ts\"",
-    "build": "npm install && npx tsc && echo 'Build completed successfully! Check dist/ directory.'",
+    "build": "tsc && echo 'Build completed successfully! Check dist/ directory.'",
     "lint": "eslint .",
     "approve-admin": "node --loader ts-node/esm scripts/approve-admin.ts"
   },
