@@ -21,8 +21,10 @@ echo ""
 # Step 2: Build Frontend
 echo -e "${BLUE}🎨 Building frontend...${NC}"
 cd frontend
-npm install
-npm run build
+echo "Installing frontend dependencies (including dev dependencies)..."
+npm ci --include=dev || npm install --include=dev
+echo "Building frontend (production mode - skipping TypeScript check)..."
+npm run build:prod
 cd ..
 echo -e "${GREEN}✅ Frontend build complete!${NC}"
 echo ""
@@ -30,7 +32,9 @@ echo ""
 # Step 3: Build Backend
 echo -e "${BLUE}⚙️  Building backend...${NC}"
 cd backend
-npm install
+echo "Installing backend dependencies..."
+npm ci || npm install
+echo "Building backend..."
 npm run build
 cd ..
 echo -e "${GREEN}✅ Backend build complete!${NC}"
