@@ -144,8 +144,19 @@ app.use('/api/admin', adminRoutes);
  * Serve Frontend (SPA) - Must be after API routes
  */
 // Catch-all route to serve the frontend for client-side routing
-app.get('*', (_req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+// This handles all non-API routes and serves the React app
+app.use((req: Request, res: Response, next) => {
+  // Skip if it's an API route
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  
+  // Serve the frontend index.html for all other routes
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'), (err) => {
+    if (err) {
+      next(err);
+    }
+  });
 });
 
 /**
