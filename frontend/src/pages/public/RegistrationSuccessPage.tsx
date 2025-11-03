@@ -23,7 +23,7 @@ export const RegistrationSuccessPage = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, var(--mantine-color-blue-0) 0%, var(--mantine-color-violet-0) 100%)',
+          background: 'var(--mantine-color-body)',
           padding: 'var(--mantine-spacing-md)',
         }}
       >
@@ -48,7 +48,7 @@ export const RegistrationSuccessPage = () => {
               <Text size="lg" c="dimmed" ta="center">
                 Thank you for completing the assessment. We've analyzed your responses and assigned you to a skill tier.
               </Text>
-              <Paper p="md" radius="md" withBorder w="100%" style={{ background: 'var(--mantine-color-blue-0)' }}>
+              <Paper p="md" radius="md" withBorder w="100%" style={{ background: 'var(--mantine-color-default-hover)' }}>
                 <Group gap="sm">
                   <IconMail size={20} color="var(--mantine-color-blue-6)" />
                   <Text size="sm" c="dimmed">

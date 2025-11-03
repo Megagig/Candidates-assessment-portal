@@ -78,7 +78,7 @@ export const HeroSection = () => {
             leftSection={<IconSparkles size={16} />}
             style={{ animation: 'fadeInDown 0.6s ease-out' }}
           >
-            AI-Powered Skill Assessment Platform
+            Candidates Skill Assessment Platform
           </Badge>
 
           {/* Headline */}

@@ -93,7 +93,7 @@ export const AdminRegisterPage = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: 'linear-gradient(135deg, var(--mantine-color-blue-0) 0%, var(--mantine-color-violet-0) 100%)',
+            background: 'var(--mantine-color-body)',
             padding: 'var(--mantine-spacing-md)',
           }}
         >
@@ -160,7 +160,7 @@ export const AdminRegisterPage = () => {
       <Navigation />
       <Box
         style={{
-          background: 'linear-gradient(135deg, var(--mantine-color-blue-0) 0%, var(--mantine-color-violet-0) 100%)',
+          background: 'var(--mantine-color-body)',
         }}
       >
         <Container size="sm" py="xl">

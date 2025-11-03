@@ -71,7 +71,7 @@ export const Features = () => {
       component="section"
       py={80}
       style={{
-        background: 'linear-gradient(180deg, var(--mantine-color-body) 0%, var(--mantine-color-gray-0) 100%)',
+        background: 'var(--mantine-color-body)',
       }}
     >
       <Container size="lg">

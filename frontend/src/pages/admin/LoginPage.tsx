@@ -31,7 +31,7 @@ export const LoginPage = () => {
           minHeight: 'calc(100vh - 80px)',
           position: 'relative',
           overflow: 'hidden',
-          background: 'linear-gradient(135deg, var(--mantine-color-blue-0) 0%, var(--mantine-color-violet-0) 100%)',
+          background: 'var(--mantine-color-body)',
         }}
       >
         {/* Animated Background Blobs */}
@@ -42,7 +42,7 @@ export const LoginPage = () => {
             right: '-10%',
             width: '40%',
             height: '40%',
-            background: 'radial-gradient(circle, rgba(103, 126, 234, 0.15) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(103, 126, 234, 0.08) 0%, transparent 70%)',
             borderRadius: '50%',
             filter: 'blur(60px)',
             animation: 'float 8s ease-in-out infinite',
@@ -55,7 +55,7 @@ export const LoginPage = () => {
             left: '-10%',
             width: '40%',
             height: '40%',
-            background: 'radial-gradient(circle, rgba(118, 75, 162, 0.15) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(118, 75, 162, 0.08) 0%, transparent 70%)',
             borderRadius: '50%',
             filter: 'blur(60px)',
             animation: 'float 10s ease-in-out infinite reverse',
