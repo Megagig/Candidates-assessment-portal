@@ -10,6 +10,9 @@ import {
   UnstyledButton,
   rem,
   Box,
+  ActionIcon,
+  useMantineColorScheme,
+  Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -18,6 +21,8 @@ import {
   IconLogout,
   IconChevronDown,
   IconUserCheck,
+  IconSun,
+  IconMoon,
 } from '@tabler/icons-react';
 import { useAuthStore } from '../stores';
 import { useLogout } from '../hooks';
@@ -28,6 +33,7 @@ export const MantineAdminLayout = () => {
   const { mutate: logout } = useLogout();
   const navigate = useNavigate();
   const location = useLocation();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   const handleLogout = () => {
     logout(undefined, {
@@ -83,37 +89,52 @@ export const MantineAdminLayout = () => {
             </Link>
           </Group>
 
-          <Menu shadow="md" width={200}>
-            <Menu.Target>
-              <UnstyledButton>
-                <Group gap="xs">
-                  <Avatar color="violet" radius="xl">
-                    {user?.name?.charAt(0).toUpperCase() || 'A'}
-                  </Avatar>
-                  <div style={{ flex: 1 }}>
-                    <Text size="sm" fw={500}>
-                      {user?.name || 'Admin'}
-                    </Text>
-                    <Text size="xs" c="dimmed">
-                      Administrator
-                    </Text>
-                  </div>
-                  <IconChevronDown size={16} />
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-
-            <Menu.Dropdown>
-              <Menu.Label>Account</Menu.Label>
-              <Menu.Item
-                leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
-                onClick={handleLogout}
-                color="red"
+          <Group gap="sm">
+            {/* Theme Toggle */}
+            <Tooltip label={colorScheme === 'dark' ? 'Light mode' : 'Dark mode'}>
+              <ActionIcon
+                onClick={() => toggleColorScheme()}
+                variant="default"
+                size="lg"
+                aria-label="Toggle color scheme"
               >
-                Logout
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+                {colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+              </ActionIcon>
+            </Tooltip>
+
+            {/* User Menu */}
+            <Menu shadow="md" width={200}>
+              <Menu.Target>
+                <UnstyledButton>
+                  <Group gap="xs">
+                    <Avatar color="violet" radius="xl">
+                      {user?.name?.charAt(0).toUpperCase() || 'A'}
+                    </Avatar>
+                    <div style={{ flex: 1 }}>
+                      <Text size="sm" fw={500}>
+                        {user?.name || 'Admin'}
+                      </Text>
+                      <Text size="xs" c="dimmed">
+                        Administrator
+                      </Text>
+                    </div>
+                    <IconChevronDown size={16} />
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Label>Account</Menu.Label>
+                <Menu.Item
+                  leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
+                  onClick={handleLogout}
+                  color="red"
+                >
+                  Logout
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
         </Group>
       </AppShell.Header>
 

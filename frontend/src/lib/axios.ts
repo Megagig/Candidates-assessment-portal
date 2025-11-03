@@ -2,9 +2,25 @@ import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
 import type { ApiError } from '../types';
 
+// Determine the API URL based on environment
+const getApiUrl = (): string => {
+  // If VITE_API_URL is explicitly set, use it
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // In production, use the same origin (backend serves frontend)
+  if (import.meta.env.PROD) {
+    return `${window.location.origin}/api`;
+  }
+  
+  // In development, use localhost
+  return 'http://localhost:5000/api';
+};
+
 // Create axios instance with default config
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: getApiUrl(),
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',

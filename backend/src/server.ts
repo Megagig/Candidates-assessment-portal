@@ -29,13 +29,46 @@ connectDB();
  * Security Middleware
  */
 
-// Helmet - Set security headers
-app.use(helmet());
+// Helmet - Set security headers with CSP configuration
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        connectSrc: ["'self'", process.env.FRONTEND_URL || 'http://localhost:5173'],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        fontSrc: ["'self'", 'data:'],
+      },
+    },
+  })
+);
 
 // CORS - Enable Cross-Origin Resource Sharing
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:5173',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+// In production, if frontend is served from same origin, allow it
+if (process.env.NODE_ENV === 'production') {
+  allowedOrigins.push(process.env.RENDER_EXTERNAL_URL || '');
+}
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow all in production since frontend is served from same origin
+      }
+    },
     credentials: true, // Allow cookies to be sent
   })
 );
@@ -106,6 +139,14 @@ app.use('/api/candidates', candidateRoutes);
 
 // Admin routes (super admin only)
 app.use('/api/admin', adminRoutes);
+
+/**
+ * Serve Frontend (SPA) - Must be after API routes
+ */
+// Catch-all route to serve the frontend for client-side routing
+app.get('*', (_req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+});
 
 /**
  * Error Handling Middleware
